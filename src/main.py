@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
+import random
 import re
 import requests
+import time
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
-# TODO: set up a loop to crawl pages
-# TODO: organise into modules
-
 ##########################################################################
-# Prepare URLs and source code
+# Prepare URLs and requests
 ##########################################################################
 
-# Set URL components
+# ~~~ URL components ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 BASE_URL = "https://digitallibrary.un.org/search?ln=en&c=Voting+Data&rg="
 LINKS_PER_PAGE = 100  # options = {10, 25, 50, 100}
 LINK_LOC_BASE = "&jrec="
@@ -30,6 +30,7 @@ link_loc = 1                # iterate by LINKS_PER_PAGE
 year = sessions_list[0]     # iterate through sessions_list
 
 # ~~~ Full URL ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 URL = "".join([BASE_URL, 
               str(LINKS_PER_PAGE), 
               LINK_LOC_BASE, 
@@ -38,16 +39,62 @@ URL = "".join([BASE_URL,
               str(year), 
               FILTERS])
 
-# ~~~ Single page test ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~ Request delay ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+MIN_DELAY = 2  # Min delay in seconds
+MAX_DELAY = 8  # Max delay in seconds
+
+# ~~~ Header data ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+REFERERS = ["https://www.google.com/", "https://bing.com/", "https://search.yahoo.com/", "https://www.baidu.com/", "https://yandex.com/"]
+REFERER_PROBS = [0.88, 0.03, 0.03, 0.03, 0.03]
+
+USER_AGENTS = ["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36", 
+               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36", 
+               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36", 
+               "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0", 
+               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36", 
+               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36", 
+               "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36", 
+               "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0", 
+               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36"]
+USER_AGENT_PROBS = [0.3, 0.15, 0.12, 0.1, 0.1, 0.08, 0.05, 0.05, 0.05]
+
+header = {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7", 
+    "Accept-Encoding": "gzip, deflate, br", 
+    "Accept-Language": "en-US,en;q=0.9;q=0.7,zh-CN;q=0.6,zh;q=0.5", 
+    "Referer": "https://www.google.com/", 
+    "Sec-Ch-Ua": "\"Chromium\";v=\"118\", \"Google Chrome\";v=\"118\", \"Not=A?Brand\";v=\"99\"", 
+    "Sec-Ch-Ua-Mobile": "?0", 
+    "Sec-Ch-Ua-Platform": "\"Windows\"", 
+    "Sec-Fetch-Dest": "document", 
+    "Sec-Fetch-Mode": "navigate", 
+    "Sec-Fetch-Site": "none", 
+    "Sec-Fetch-User": "?1", 
+    "Upgrade-Insecure-Requests": "1", 
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36", 
+  }
+
+# Assign weighted-random referer and user-agent to header
+referer = random.choices(REFERERS, weights=REFERER_PROBS, k=1)
+user_agent = random.choices(USER_AGENTS, weights=USER_AGENT_PROBS, k=1)
+header["Referer"] = referer
+header["User-Agent"] = user_agent
+
+##########################################################################
+# Extract data
+##########################################################################
+
 single_URL = "https://digitallibrary.un.org/record/4016932?ln=en"
-html = requests.get(single_URL)
+html = requests.get(single_URL, headers=header)
 # Extract html source code
 URL_source_code = html.text
 # Parse URL_source_code
 soup = BeautifulSoup(URL_source_code, "html.parser")
 
 ##########################################################################
-# Extract data
+# Process data
 ##########################################################################
 """
 Voting data is contained in spans with the class: 
@@ -69,7 +116,7 @@ note = data[5].text
 voting_summary = data[6].text
 vote_date = data[7].text
 
-# ~~~ Extract voting figures ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~ Parse voting figures ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def get_figures(raw_data: str) -> list:
     """
