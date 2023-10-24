@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-import random
-import re
-import requests
-import time
+import random, re, requests, time
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
@@ -12,12 +9,15 @@ from bs4.element import ResultSet
 
 # ~~~ URL components ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-BASE_URL = "https://digitallibrary.un.org/search?ln=en&c=Voting+Data&rg="
+BASE_URL_SEARCH = "https://digitallibrary.un.org/search?ln=en&c=Voting+Data&rg="
 LINKS_PER_PAGE = 100  # options = {10, 25, 50, 100}
 LINK_LOC_BASE = "&jrec="
 YEAR_BASE = "&fct__3="
 FILTERS = "&fct__2=General+Assembly&cc=Voting+Data&fct__9=Vote"
 PRESENT_SESSION = 2023
+
+BASE_URL_RECORD = "https://digitallibrary.un.org/record/"
+LANGUAGE = "?ln=en"
 
 # Master dict for resolution dicts
 resolutions_dict = {}
@@ -29,9 +29,9 @@ sessions_list.remove(1964)
 link_loc = 1                # iterate by LINKS_PER_PAGE
 year = sessions_list[0]     # iterate through sessions_list
 
-# ~~~ Full URL ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~ Full search URL ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-URL = "".join([BASE_URL, 
+search_URL = "".join([BASE_URL_SEARCH, 
               str(LINKS_PER_PAGE), 
               LINK_LOC_BASE, 
               str(link_loc), 
@@ -65,9 +65,6 @@ header = {
     "Accept-Encoding": "gzip, deflate, br", 
     "Accept-Language": "en-US,en;q=0.9;q=0.7,zh-CN;q=0.6,zh;q=0.5", 
     "Referer": "https://www.google.com/", 
-    "Sec-Ch-Ua": "\"Chromium\";v=\"118\", \"Google Chrome\";v=\"118\", \"Not=A?Brand\";v=\"99\"", 
-    "Sec-Ch-Ua-Mobile": "?0", 
-    "Sec-Ch-Ua-Platform": "\"Windows\"", 
     "Sec-Fetch-Dest": "document", 
     "Sec-Fetch-Mode": "navigate", 
     "Sec-Fetch-Site": "none", 
@@ -76,22 +73,41 @@ header = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36", 
   }
 
+##########################################################################
+# Extract record links
+##########################################################################
+
+# Assign weighted-random referer and user-agent to header
+referer = random.choices(REFERERS, weights=REFERER_PROBS, k=1)
+user_agent = random.choices(USER_AGENTS, weights=USER_AGENT_PROBS, k=1)
+header["Referer"] = referer[0]
+header["User-Agent"] = user_agent[0]
+
+search_html = requests.get(search_URL, headers=header)
+# Extract html source code
+search_URL_source_code = search_html.text
+# Parse source code
+raw_search = BeautifulSoup(search_URL_source_code, "html.parser")
+
+links = [link.get("href") for link in raw_search.find_all("a", href=True)]
+
+##########################################################################
+# Extract record data
+##########################################################################
+
 # Assign weighted-random referer and user-agent to header
 referer = random.choices(REFERERS, weights=REFERER_PROBS, k=1)
 user_agent = random.choices(USER_AGENTS, weights=USER_AGENT_PROBS, k=1)
 header["Referer"] = referer
 header["User-Agent"] = user_agent
 
-##########################################################################
-# Extract data
-##########################################################################
-
-single_URL = "https://digitallibrary.un.org/record/4016932?ln=en"
-html = requests.get(single_URL, headers=header)
-# Extract html source code
-URL_source_code = html.text
-# Parse URL_source_code
-soup = BeautifulSoup(URL_source_code, "html.parser")
+# Example record URL "https://digitallibrary.un.org/record/4016932?ln=en"
+# record_URL = BASE_URL_RECORD + "4016932" + LANGUAGE
+# record_html = requests.get(record_URL, headers=header)
+# # Extract html source code
+# record_URL_source_code = record_html.text
+# # Parse source code
+# raw_record = BeautifulSoup(record_URL_source_code, "html.parser")
 
 ##########################################################################
 # Process data
@@ -100,7 +116,7 @@ soup = BeautifulSoup(URL_source_code, "html.parser")
 Voting data is contained in spans with the class: 
 class="value col-xs-12 col-sm-9 col-md-10".
 """
-data = soup.find_all("span", class_="value col-xs-12 col-sm-9 col-md-10")
+# data = raw_record.find_all("span", class_="value col-xs-12 col-sm-9 col-md-10")
 # Check object indices in data:
 # for i in range(len(data)):
 #     print(f"data[{i}]: \n {data[i]}")
