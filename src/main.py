@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import random, re, requests, time
+import csv, random, re, requests, time
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 
@@ -19,25 +19,13 @@ PRESENT_SESSION = 2023
 BASE_URL_RECORD = "https://digitallibrary.un.org/record/"
 LANGUAGE = "?ln=en"
 
+# Cannot paginate >500 records, so iterate by year (~100 records per year)
+SESSIONS_LIST = list(range(1946, PRESENT_SESSION + 1))
+# No records available for 1964
+SESSIONS_LIST.remove(1964)
+
 # Master dict for resolution dicts
 resolutions_dict = {}
-# Cannot paginate >500 records, so iterate by year (~100 records per year)
-sessions_list = list(range(1946, PRESENT_SESSION + 1))
-# No records available for 1964
-sessions_list.remove(1964)
-
-link_loc = 1                # iterate by LINKS_PER_PAGE
-year = sessions_list[0]     # iterate through sessions_list
-
-# ~~~ Full search URL ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-search_URL = "".join([BASE_URL_SEARCH, 
-              str(LINKS_PER_PAGE), 
-              LINK_LOC_BASE, 
-              str(link_loc), 
-              YEAR_BASE, 
-              str(year), 
-              FILTERS])
 
 # ~~~ Request delay ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -163,32 +151,51 @@ def get_figures(raw_data: str) -> list:
 # Extract record links
 ##########################################################################
 
-# Get weighted random selection of referer and user-agent
-referer = weighted_random_selection(REFERERS, REFERER_PROBS)
-user_agent = weighted_random_selection(USER_AGENTS, USER_AGENT_PROBS)
+# Master list for URL record segments
+segments_master = []
 
-# for i in range(10):
-#     referer = weighted_random_selection(REFERERS, REFERER_PROBS)
-#     user_agent = weighted_random_selection(USER_AGENTS, USER_AGENT_PROBS)
-#     print(f"Referer:    {referer}")
-#     print(f"User-agent: {user_agent}\n")
-
-# Assign weighted random referer and user-agent to header
-header["Referer"] = referer
-header["User-Agent"] = user_agent
-
-search_html = requests.get(search_URL, headers=header)
-# Extract html source code
-search_URL_source_code = search_html.text
-# Parse source code
-raw_search = BeautifulSoup(search_URL_source_code, "html.parser")
-
-# ~~~ Parse record page links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# Get link elements from source code
-links = str(raw_search.find_all("a", href=True))
-# Get URL segments and remove duplicates
-segments = list(set(get_segments(links)))
+for session in SESSIONS_LIST[:1]:
+    # Reset link_loc and search_URL
+    link_loc = 1
+    search_URL = "".join([BASE_URL_SEARCH, 
+                          str(LINKS_PER_PAGE), 
+                          LINK_LOC_BASE, 
+                          str(link_loc), 
+                          YEAR_BASE, 
+                          str(session), 
+                          FILTERS])
+    
+    # test with 1 page
+    for page in range(2):
+        # Get weighted random selection of referer and user-agent
+        referer = weighted_random_selection(REFERERS, REFERER_PROBS)
+        user_agent = weighted_random_selection(USER_AGENTS, USER_AGENT_PROBS)
+        # Assign weighted random referer and user-agent to header
+        header["Referer"] = referer
+        header["User-Agent"] = user_agent
+        
+        search_html = requests.get(search_URL, headers=header)
+        # Extract html source code
+        search_URL_source_code = search_html.text
+        # Parse source code
+        raw_search = BeautifulSoup(search_URL_source_code, "html.parser")
+        
+        # Get link elements from source code
+        links = str(raw_search.find_all("a", href=True))
+        # Get URL segments and remove duplicates
+        segments = list(set(get_segments(links)))
+        
+        if len(segments) == 0:
+            print(f"No segments found at {search_URL}")
+            break
+        
+        segments_master.extend(segments)
+        
+        if len(segments) < LINKS_PER_PAGE:
+            print("No more records")
+            break
+        
+        link_loc += LINKS_PER_PAGE # iterate by LINKS_PER_PAGE
 
 ##########################################################################
 # Iterate through segments
@@ -203,13 +210,14 @@ segments = list(set(get_segments(links)))
 #     # Get weighted random selection of referer and user-agent
 #     referer = weighted_random_selection(REFERERS, REFERER_PROBS)
 #     user_agent = weighted_random_selection(USER_AGENTS, USER_AGENT_PROBS)
+#     proxy = weighted_random_selection(proxy_list, proxy_probs)
 #     # Assign weighted random referer and user-agent to header
 #     header["Referer"] = referer
 #     header["User-Agent"] = user_agent
     
 #     # Example record URL "https://digitallibrary.un.org/record/4016932?ln=en"
 #     record_URL = BASE_URL_RECORD + segment + LANGUAGE
-#     record_html = requests.get(record_URL, headers=header)
+#     record_html = requests.get(record_URL, headers=header, proxies={"http": proxy, "https": proxy})
 #     # Extract html source code
 #     record_URL_source_code = record_html.text
 #     # Parse source code
