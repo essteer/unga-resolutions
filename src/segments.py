@@ -9,7 +9,7 @@ from datetime import datetime
 
 # ~~~ URL components ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-BASE_URL_SEARCH = "https://digitallibrary.un.org/search?ln=en&c=Voting+Data&rg="
+BASE_URL = "https://digitallibrary.un.org/search?ln=en&c=Voting+Data&rg="
 LINKS_PER_PAGE = 100  # options = {10, 25, 50, 100}
 LINK_LOC_BASE = "&jrec="
 YEAR_BASE = "&fct__3="
@@ -119,7 +119,7 @@ for session in SESSIONS_LIST:
         time.sleep(random_delay)
         
         # Update search_URL with current session and link_loc
-        search_URL = "".join([BASE_URL_SEARCH, 
+        search_URL = "".join([BASE_URL, 
                           str(LINKS_PER_PAGE), 
                           LINK_LOC_BASE, 
                           str(link_loc), 
@@ -165,7 +165,7 @@ for session in SESSIONS_LIST:
 # Get current date in the format "yyyymmdd"
 today = datetime.now().strftime("%Y%m%d")
 # Set filename
-filename = f"./data/{today}_link_segments.csv"
+filename = f"./data/{today}_segments.csv"
 # Create csv of link segments
 with open(filename, 'w', newline="") as file:
     writer = csv.writer(file)
