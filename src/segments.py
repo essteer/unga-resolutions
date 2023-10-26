@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import csv, random, re, requests, time
 from bs4 import BeautifulSoup
-from bs4.element import ResultSet
+from datetime import datetime
 
 ##########################################################################
 # Prepare URLs and requests
@@ -16,21 +16,17 @@ YEAR_BASE = "&fct__3="
 FILTERS = "&fct__2=General+Assembly&cc=Voting+Data&fct__9=Vote"
 PRESENT_SESSION = 2023
 
-BASE_URL_RECORD = "https://digitallibrary.un.org/record/"
-LANGUAGE = "?ln=en"
+# ~~~ Updates ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Cannot paginate >500 records, so iterate by year (~100 records per year)
 SESSIONS_LIST = list(range(1946, PRESENT_SESSION + 1))
 # No records available for 1964
 SESSIONS_LIST.remove(1964)
-
-# Master dict for resolution dicts
-resolutions_dict = {}
-
-# ~~~ Request delay ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-MIN_DELAY = 2  # Min delay in seconds
-MAX_DELAY = 8  # Max delay in seconds
+# Max no. of records was 170, in 1952
+MAX_LINKS_PER_SESSION = 170
+# Time delays in seconds
+MIN_DELAY = 2
+MAX_DELAY = 8
 
 # ~~~ Header data ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -105,48 +101,6 @@ def get_segments(raw_data: str) -> list:
     return segments
 
 
-def get_figures(raw_data: str) -> list:
-    """
-    Extracts a list of string integers within a string object
-    
-    Args:
-        raw_data, string object
-    Returns:
-        figures, list of integers parsed from raw_data
-    """
-    figures = re.findall(r"\d+", raw_data)
-    return figures
-
-
-# def sort_countries(raw_data: ResultSet) -> None:
-#     """
-#     Sorts countries based on voting record
-#     Appends countries to corresponding lists
-    
-#     Args:
-#         raw_data, BeautifulSoup bs4.element.ResultSet object    
-#     Returns:
-#         None
-#     """
-#     raw = raw_data[:]
-    
-#     for i in range(len(raw)):
-#         # Separate vote and name values
-#         split_values = raw[i].split(maxsplit=1)
-#         # Yes votes
-#         if split_values[0] == "Y":
-#             yes_countries.append(split_values[1])
-#         # No votes
-#         elif split_values[0] == "N":
-#             no_countries.append(split_values[1])
-#         # Abstentions
-#         elif split_values[0] == "A":
-#             abstention_countries.append(split_values[1])
-#         # Non-voting
-#         else:
-#             non_voting_countries.append(raw[i].strip())
-
-
 ##########################################################################
 # Extract record links
 ##########################################################################
@@ -154,19 +108,25 @@ def get_figures(raw_data: str) -> list:
 # Master list for URL record segments
 segments_master = []
 
-for session in SESSIONS_LIST[:1]:
-    # Reset link_loc and search_URL
+for session in SESSIONS_LIST:
+    # Reset link_loc to 1 for each session (year)
     link_loc = 1
-    search_URL = "".join([BASE_URL_SEARCH, 
+    # Get record links displayed on each page for that session (year)
+    for page in range((MAX_LINKS_PER_SESSION // LINKS_PER_PAGE) + 1):
+        # Generate random delay
+        random_delay = random.uniform(MIN_DELAY, MAX_DELAY)
+        # Add random delay
+        time.sleep(random_delay)
+        
+        # Update search_URL with current session and link_loc
+        search_URL = "".join([BASE_URL_SEARCH, 
                           str(LINKS_PER_PAGE), 
                           LINK_LOC_BASE, 
                           str(link_loc), 
                           YEAR_BASE, 
                           str(session), 
                           FILTERS])
-    
-    # test with 1 page
-    for page in range(2):
+        
         # Get weighted random selection of referer and user-agent
         referer = weighted_random_selection(REFERERS, REFERER_PROBS)
         user_agent = weighted_random_selection(USER_AGENTS, USER_AGENT_PROBS)
@@ -186,106 +146,33 @@ for session in SESSIONS_LIST[:1]:
         segments = list(set(get_segments(links)))
         
         if len(segments) == 0:
-            print(f"No segments found at {search_URL}")
+            print(f"No segments for {session} found at {search_URL}")
             break
         
         segments_master.extend(segments)
         
         if len(segments) < LINKS_PER_PAGE:
-            print("No more records")
+            print(f"No more records for year {session}")
             break
         
-        link_loc += LINKS_PER_PAGE # iterate by LINKS_PER_PAGE
+        # Iterate link_loc by LINKS_PER_PAGE
+        link_loc += LINKS_PER_PAGE
 
 ##########################################################################
-# Iterate through segments
+# Save to csv
 ##########################################################################
-# TODO uncomment from here
-# for segment in segments[:2]:
-    
-#     ##########################################################################
-#     # Extract record data
-#     ##########################################################################
-    
-#     # Get weighted random selection of referer and user-agent
-#     referer = weighted_random_selection(REFERERS, REFERER_PROBS)
-#     user_agent = weighted_random_selection(USER_AGENTS, USER_AGENT_PROBS)
-#     proxy = weighted_random_selection(proxy_list, proxy_probs)
-#     # Assign weighted random referer and user-agent to header
-#     header["Referer"] = referer
-#     header["User-Agent"] = user_agent
-    
-#     # Example record URL "https://digitallibrary.un.org/record/4016932?ln=en"
-#     record_URL = BASE_URL_RECORD + segment + LANGUAGE
-#     record_html = requests.get(record_URL, headers=header, proxies={"http": proxy, "https": proxy})
-#     # Extract html source code
-#     record_URL_source_code = record_html.text
-#     # Parse source code
-#     raw_record = BeautifulSoup(record_URL_source_code, "html.parser")
-    
-#     ##########################################################################
-#     # Process data
-#     ##########################################################################
-#     """
-#     Voting data is contained in spans with the class: 
-#     class="value col-xs-12 col-sm-9 col-md-10".
-#     """
-#     data = raw_record.find_all("span", class_="value col-xs-12 col-sm-9 col-md-10")
-#     # Check object indices in data:
-#     # for i in range(len(data)):
-#     #     print(f"data[{i}]: \n {data[i]}")
-    
-#     # ~~~ Extract text into variables ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#     # TODO make this dynamic, cannot rely on fixed order
-#     # TODO make variables == "" or "None" when no record found
-#     title = data[0].text
-#     agenda = data[1].text
-#     resolution = data[2].text
-#     meeting_record = data[3].text
-#     draft_resolution = data[4].text
-#     note = data[5].text
-#     voting_summary = data[6].text
-#     vote_date = data[7].text
-    
-#     # ~~~ Sort countries by vote record ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#     """
-#     Voting Summary Yes: 80 | No: 2 | Abstentions: 47 | Non-Voting: 64 | Total voting membership: 193 '
-#     """
-#     voting_figures = get_figures(voting_summary)
-    
-#     # Lists to store country names by voting record
-#     yes_countries = []
-#     no_countries = []
-#     abstention_countries = []
-#     non_voting_countries = []
-    
-#     # Extract vote and country string from data
-#     vote_by_country = data[8].find_all(string=True)
-#     # Sort countries into lists by vote record
-#     sort_countries(vote_by_country)
-    
-#     # ~~~ Create dict of resolution data ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-#     # Set record_name to current resolution reference
-#     record_name = str(resolution)
-    
-#     # Add dict of current resolution to main resolutions_dict
-#     resolutions_dict[record_name] = {"Title": title, 
-#                                      "Agenda": agenda,
-#                                      "Resolution": resolution, 
-#                                      "Meeting Record": meeting_record, 
-#                                      "Draft Resolution": draft_resolution, 
-#                                      "Note": note, 
-#                                      "Num Yes": int(voting_figures[0]), 
-#                                      "Num No": int(voting_figures[1]), 
-#                                      "Num Abstentions": int(voting_figures[2]), 
-#                                      "Num Non-Voting": int(voting_figures[3]), 
-#                                      "Total Votes": int(voting_figures[4]), 
-#                                      "Vote Date": vote_date, 
-#                                      "Yes Votes": yes_countries, 
-#                                      "No Votes": no_countries, 
-#                                      "Abstentions": abstention_countries, 
-#                                      "Non-Voting": non_voting_countries, 
-#                                      "Record URL": str(record_URL)
-#                                      }
 
+# Get current date in the format "yyyymmdd"
+today = datetime.now().strftime("%Y%m%d")
+# Set filename
+filename = f"./data/{today}_link_segments.csv"
+# Create csv of link segments
+with open(filename, 'w', newline="") as file:
+    writer = csv.writer(file)
+    # Write header row
+    writer.writerow(["Segment"])
+    # Write each element of the list to the CSV file as a new row
+    for segment in segments_master:
+        writer.writerow([segment])
+
+print("Process complete.")
