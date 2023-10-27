@@ -5,10 +5,9 @@ from bs4.element import ResultSet
 from datetime import datetime
 import os
 
-# TODO: generalise get_figures to handle missing numbers
-
 # NOTE: update before running
-LATEST_VERSION = "./data/20231025_records.csv"
+LATEST_VERSION = "./data/20231027_records.csv"
+ENCODING = "utf-8"
 
 ##########################################################################
 # Prepare URLs and requests
@@ -16,8 +15,6 @@ LATEST_VERSION = "./data/20231025_records.csv"
 
 # URL components
 BASE_URL = "https://digitallibrary.un.org/record/"
-LANGUAGE = "?ln=en"
-
 # Store URL segments in list
 SEGMENTS = []
 # Read csv of link segments
@@ -30,16 +27,16 @@ with open(filename, "r") as file:
         SEGMENTS.append(row[0])
 
 # Read csv of link segments previously processed
-with open("./data/processed_segments.txt", "r") as file:
+with open("./data/processed_segments.txt", "r", encoding=ENCODING) as file:
     processed_segments = [line.strip() for line in file]
     
 BATCH_SIZE = 20
 START = len(processed_segments)
 END = min(START + BATCH_SIZE, len(SEGMENTS)) + 1
-
-# Time delays in seconds
-MIN_DELAY = 2
-MAX_DELAY = 8
+# Time delay from robots.txt
+CRAWL_DELAY = 5
+# Counter to track progress
+counter = 0
 
 # ~~~ Header data ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -114,6 +111,27 @@ def get_figures(raw_data: str) -> list:
     return figures
 
 
+def get_figures_granular(raw_data: str) -> list:
+    """
+    Helper function for get_figures for cases where
+    expected figures are missing, such as record/671259:
+        voting_summary: Voting Summary Yes: 44 | No: | Abstentions: 5 | Non-Voting: 5 | Total voting membership: 54
+    """
+    voting_figures = []
+    
+    substrings = raw_data.split("|")
+            
+    for substring in substrings:
+        
+        figure = get_figures(substring)
+        if figure == []:
+            voting_figures.append("0")
+        else:
+            voting_figures.append(figure[0])
+    
+    return voting_figures
+
+
 def sort_countries(raw_data: ResultSet) -> None:
     """
     Sorts countries based on voting record
@@ -144,27 +162,34 @@ def sort_countries(raw_data: ResultSet) -> None:
 
 
 ##########################################################################
+# Sample sets
+##########################################################################
+
+# Specific record tests
+# test_segments = ["4016932",  # general record 
+#                  "671259",  # missing figure
+#                  "3996092"  # encoding "\u0130"
+#                  ]
+# Random tests
+# sample = random.sample(SEGMENTS, 20)
+
+##########################################################################
 # Iterate through records
 ##########################################################################
 
 # Master dict for resolution records
 resolutions_dict = {}
-# Set counter
-counter = 0
 
-test_segments = ["4016932", "3839868", "671259"]
-for segment in test_segments:
-
-# for segment in SEGMENTS[START:END]:
+# for segment in test_segments:
+# for segment in sample:
+for segment in SEGMENTS[START:END]:
 
     if segment in processed_segments:
         print(f"segment {segment} already processed")
         continue
     
-    # Generate random delay
-    random_delay = random.uniform(MIN_DELAY, MAX_DELAY)
-    # Add random delay
-    time.sleep(random_delay)
+    # Add CRAWL_DELAY
+    time.sleep(CRAWL_DELAY)
     
     # Get weighted random selection of referer and user-agent
     referer = weighted_random_selection(REFERERS, REFERER_PROBS)
@@ -174,7 +199,7 @@ for segment in test_segments:
     header["User-Agent"] = user_agent
     
     # Example record URL "https://digitallibrary.un.org/record/4016932?ln=en"
-    record_URL = BASE_URL + segment + LANGUAGE
+    record_URL = BASE_URL + segment
     record_html = requests.get(record_URL, headers=header)
     # Extract html source code
     record_URL_source_code = record_html.text
@@ -193,9 +218,13 @@ for segment in test_segments:
     try:
         voting_summary = metadata_dict["Vote summary"]
         voting_figures = get_figures(voting_summary)
-    except KeyError:
-        voting_figures = ["0", "0", "0", "0", "0"]
+        # Conduct granular extraction if data missing
+        if len(voting_figures) != 5:
+            voting_figures = get_figures_granular(voting_summary)
     
+    except KeyError:
+        # Set all five totals to nan if none present
+        voting_figures = [float("nan")]*5
     
     try:
         # Extract vote and country string from data
@@ -209,11 +238,13 @@ for segment in test_segments:
         non_voting_countries = []
         # Sort countries into lists by vote record
         sort_countries(vote_by_country)
+    
     except ValueError:
-        yes_countries = ["Unknown"]
-        no_countries = ["Unknown"]
-        abstention_countries = ["Unknown"]
-        non_voting_countries = ["Unknown"]
+        # Set all to Undisclosed if breakdown not provided
+        yes_countries = ["Undisclosed"]
+        no_countries = ["Undisclosed"]
+        abstention_countries = ["Undisclosed"]
+        non_voting_countries = ["Undisclosed"]
     
     # Set record_name to resolution reference
     resolution = str(metadata_dict.get("Resolution", "None"))
@@ -243,6 +274,26 @@ for segment in test_segments:
     counter += 1
 
 ##########################################################################
+# Encode data in UTF-8
+##########################################################################
+
+encoded_resolutions_dict = {}
+for res, metadata in resolutions_dict.items():
+    encoded_metadata = {}
+    
+    for key, value in metadata.items(): 
+        # Encode byte literals
+        if isinstance(value, bytes):
+            encoded_value = value.decode(ENCODING)
+        # Leave other values unchanged
+        else:
+            encoded_value = value
+        
+        encoded_metadata[key] = encoded_value
+    
+    encoded_resolutions_dict[res] = encoded_metadata
+
+##########################################################################
 # Save to csv
 ##########################################################################
 
@@ -250,42 +301,47 @@ for segment in test_segments:
 today = datetime.now().strftime("%Y%m%d")
 # Set filename
 new_version = f"./data/{today}_records.csv"
-
-# Check whether the file exists
+# Check whether LATEST_VERSION exists
 file_exists = os.path.isfile(LATEST_VERSION)
 
 if file_exists:
-
-    # Read the existing CSV file
-    with open(LATEST_VERSION, "r", newline="") as file:
-        reader = csv.reader(file)
-        data = list(reader)
-
-    # Append resolutions_dict data to existing data
-    for res, metadata in resolutions_dict.items():
-        new_row = [metadata.get(column, "") for column in data[0]]
-        data.append(new_row)
-
-    # Save entire dataset to new file
-    with open(new_version, "w", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerows(data)
+    try:
+        # Read the existing CSV file
+        with open(LATEST_VERSION, "r", encoding=ENCODING, newline="") as file:
+            reader = csv.reader(file)
+            data = list(reader)
+    
+        # Append resolutions_dict data to existing data
+        for res, metadata in encoded_resolutions_dict.items():
+            new_row = [metadata.get(column, "") for column in data[0]]
+            data.append(new_row)
+    
+        # Save entire dataset to new file
+        with open(new_version, "w", encoding=ENCODING, newline="") as file:
+            writer = csv.writer(file)
+            writer.writerows(data)
+    
+    except Exception as e:
+            print(e)
   
 else:
-    # Save resolutions_dict data to csv
-    with open(new_version, "w", newline="") as file:
-        
-        columns = list(resolutions_dict.values())[0].keys()
-        writer = csv.DictWriter(file, fieldnames=columns)
-        
-        if not file_exists:
-            writer.writeheader()
-        
-        for res, metadata in resolutions_dict.items():
-            writer.writerow(metadata)
+    try:
+        # Save resolutions_dict data to csv
+        with open(new_version, "w", encoding=ENCODING, newline="") as file:
+            
+            columns = list(encoded_resolutions_dict.values())[0].keys()
+            writer = csv.DictWriter(file, fieldnames=columns)
+            
+            if not file_exists:
+                writer.writeheader()
+            for res, metadata in encoded_resolutions_dict.items():
+                writer.writerow(metadata)
+                    
+    except Exception as e:
+        print(e)
 
-# Updated file of processed URLs for later resumption
-with open("./data/processed_segments.txt", "a") as file:
+# Update file of processed URLs for later resumption
+with open(f"./data/{today}_processed_segments.txt", "a", encoding=ENCODING) as file:
     for segment in processed_segments:
         file.write(f"{segment}\n")
         
