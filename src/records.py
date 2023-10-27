@@ -1,24 +1,28 @@
 # -*- coding: utf-8 -*-
-import csv, random, re, requests, time
+import csv, logging, os, random, re, requests, time
 from bs4 import BeautifulSoup
 from bs4.element import ResultSet
 from datetime import datetime
-import os
+from tqdm import tqdm
 
 # NOTE: update before running
-LATEST_VERSION = "./data/20231027_records.csv"
+LATEST_VERSION = "./data/20231028_0018_records.csv"
+LATEST_PROCESSED_SEGMENTS = "./data/20231028_0018_processed_segments.txt"
+LATEST_LINKS = "./data/20231026_1158_link_segments.csv"
 ENCODING = "utf-8"
 
 ##########################################################################
 # Prepare URLs and requests
 ##########################################################################
 
-# URL components
+logging.basicConfig(filename="./logs/error.log", 
+                    level=logging.INFO,
+                    format="%(asctime)s - %(levelname)s: %(message)s")
 BASE_URL = "https://digitallibrary.un.org/record/"
 # Store URL segments in list
 SEGMENTS = []
 # Read csv of link segments
-filename = "./data/20231026_link_segments.csv"
+filename = LATEST_LINKS
 with open(filename, "r") as file:
     csv_reader = csv.reader(file)
     # Skip header row
@@ -26,47 +30,62 @@ with open(filename, "r") as file:
     for row in csv_reader:
         SEGMENTS.append(row[0])
 
+# Create current text file if it doesn't exist
+with open(LATEST_PROCESSED_SEGMENTS, "a", encoding=ENCODING) as file:
+    pass
+
 # Read csv of link segments previously processed
-with open("./data/processed_segments.txt", "r", encoding=ENCODING) as file:
+with open(LATEST_PROCESSED_SEGMENTS, "r", encoding=ENCODING) as file:
     processed_segments = [line.strip() for line in file]
-    
-BATCH_SIZE = 20
+
+BATCH_SIZE = 500
 START = len(processed_segments)
-END = min(START + BATCH_SIZE, len(SEGMENTS)) + 1
-# Time delay from robots.txt
-CRAWL_DELAY = 5
+END = min(START + BATCH_SIZE, len(SEGMENTS))
+# Time delays in seconds
+MIN_DELAY = 2
+MAX_DELAY = 8
 # Counter to track progress
 counter = 0
 
 # ~~~ Header data ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-REFERERS = ["https://www.google.com/", "https://bing.com/", "https://search.yahoo.com/", "https://www.baidu.com/", "https://yandex.com/"]
+REFERERS = ["https://www.google.com/", 
+            "https://bing.com/", 
+            "https://search.yahoo.com/", 
+            "https://www.baidu.com/", 
+            "https://yandex.com/"]
+
 REFERER_PROBS = [0.88, 0.03, 0.03, 0.03, 0.03]
 
-USER_AGENTS = ["Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36", 
-               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36", 
-               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36", 
-               "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0", 
-               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36", 
-               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36", 
-               "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36", 
-               "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0", 
-               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36", 
-               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/118.0", 
-               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15", 
-               "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0", 
-               "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0", 
-               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 OPR/102.0.0.0", 
-               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.60", 
-               "Mozilla/5.0 (Windows NT 10.0; rv:109.0) Gecko/20100101 Firefox/118.0", 
-               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.46", 
-               "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Safari/605.1.15", 
-               "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36", 
-               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.47"]
-USER_AGENT_PROBS = [0.205, 0.14, 0.13, 0.105, 0.055, 
-                    0.055, 0.05, 0.045, 0.04, 0.03, 
-                    0.025, 0.02, 0.015, 0.015, 0.015, 
-                    0.0125, 0.0125, 0.012, 0.01, 0.008]
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36", 
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36", 
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36", 
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.0", 
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36", 
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36", 
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36", 
+    "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0", 
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36", 
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/118.0", 
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15", 
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0", 
+    "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/118.0", 
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 OPR/102.0.0.0", 
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.60", 
+    "Mozilla/5.0 (Windows NT 10.0; rv:109.0) Gecko/20100101 Firefox/118.0", 
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.46", 
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Safari/605.1.15", 
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36", 
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.47"
+]
+
+USER_AGENT_PROBS = [
+    0.205, 0.14, 0.13, 0.105, 0.055, 
+    0.055, 0.05, 0.045, 0.04, 0.03, 
+    0.025, 0.02, 0.015, 0.015, 0.015, 
+    0.0125, 0.0125, 0.012, 0.01, 0.008
+]
 
 header = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7", 
@@ -166,10 +185,11 @@ def sort_countries(raw_data: ResultSet) -> None:
 ##########################################################################
 
 # Specific record tests
-# test_segments = ["4016932",  # general record 
-#                  "671259",  # missing figure
-#                  "3996092"  # encoding "\u0130"
-#                  ]
+# test_segments = [
+    # "4016932",  # general record 
+    # "671259",  # missing figure
+    # "3996092"  # encoding "\u0130"
+# ]
 # Random tests
 # sample = random.sample(SEGMENTS, 20)
 
@@ -182,28 +202,35 @@ resolutions_dict = {}
 
 # for segment in test_segments:
 # for segment in sample:
-for segment in SEGMENTS[START:END]:
+for segment in tqdm(SEGMENTS[START:END], desc="Fetching records"):
 
     if segment in processed_segments:
         print(f"segment {segment} already processed")
         continue
     
-    # Add CRAWL_DELAY
-    time.sleep(CRAWL_DELAY)
+    # Random delay between requests
+    random_delay = random.uniform(MIN_DELAY, MAX_DELAY)
+    time.sleep(random_delay)
     
-    # Get weighted random selection of referer and user-agent
+    # Assign weighted random referer and user-agent to header
     referer = weighted_random_selection(REFERERS, REFERER_PROBS)
     user_agent = weighted_random_selection(USER_AGENTS, USER_AGENT_PROBS)
-    # Assign weighted random referer and user-agent to header
     header["Referer"] = referer
     header["User-Agent"] = user_agent
     
     # Example record URL "https://digitallibrary.un.org/record/4016932?ln=en"
     record_URL = BASE_URL + segment
     record_html = requests.get(record_URL, headers=header)
-    # Extract html source code
+    
+    if isinstance(record_html, requests.models.Response):
+        if record_html.status_code == 502:
+            logging.error(f"502 Bad Gateway response; url: {record_URL}; counter: {counter}")
+            break
+        elif record_html.status_code != 200:
+            logging.info(f"Response status code {record_html.status_code}; url: {record_URL}; counter: {counter}")
+    
+    # Extract and parse html source code
     record_URL_source_code = record_html.text
-    # Parse source code
     raw_record = BeautifulSoup(record_URL_source_code, "html.parser")
     
     # Voting metadata contained in multiple <div class="metadata-row">
@@ -211,6 +238,7 @@ for segment in SEGMENTS[START:END]:
     values = raw_record.find_all("span", class_="value col-xs-12 col-sm-9 col-md-10")
     # Create dict of metadata
     metadata_dict = {}
+    
     for key, value in zip(keys, values):
         metadata_dict[key.text.strip()] = value.text
     
@@ -297,10 +325,10 @@ for res, metadata in resolutions_dict.items():
 # Save to csv
 ##########################################################################
 
-# Get current date in the format "yyyymmdd"
-today = datetime.now().strftime("%Y%m%d")
+# Get datetime as "yyyymmdd_hhmm"
+current_datetime = datetime.now().strftime("%Y%m%d_%H%M")
 # Set filename
-new_version = f"./data/{today}_records.csv"
+new_version = f"./data/{current_datetime}_records.csv"
 # Check whether LATEST_VERSION exists
 file_exists = os.path.isfile(LATEST_VERSION)
 
@@ -322,7 +350,7 @@ if file_exists:
             writer.writerows(data)
     
     except Exception as e:
-            print(e)
+        logging.exception(f"Error: {str(e)}; url: {record_URL}; counter: {counter}")
   
 else:
     try:
@@ -338,10 +366,10 @@ else:
                 writer.writerow(metadata)
                     
     except Exception as e:
-        print(e)
+        logging.exception(f"Error: {str(e)}; url: {record_URL}; counter: {counter}")
 
 # Update file of processed URLs for later resumption
-with open(f"./data/{today}_processed_segments.txt", "a", encoding=ENCODING) as file:
+with open(f"./data/{current_datetime}_processed_segments.txt", "w", encoding=ENCODING) as file:
     for segment in processed_segments:
         file.write(f"{segment}\n")
         

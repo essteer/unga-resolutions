@@ -2,6 +2,7 @@
 import csv, random, re, requests, time
 from bs4 import BeautifulSoup
 from datetime import datetime
+from tqdm import tqdm
 
 ##########################################################################
 # Prepare URLs and requests
@@ -108,7 +109,7 @@ def get_segments(raw_data: str) -> list:
 # Master list for URL record segments
 segments_master = []
 
-for session in SESSIONS_LIST:
+for session in tqdm(SESSIONS_LIST, desc="Fetching links:"):
     # Reset link_loc to 1 for each session (year)
     link_loc = 1
     # Get record links displayed on each page for that session (year)
@@ -163,7 +164,7 @@ for session in SESSIONS_LIST:
 ##########################################################################
 
 # Get current date in the format "yyyymmdd"
-today = datetime.now().strftime("%Y%m%d")
+today = datetime.now().strftime("%Y%m%d_%H%M")
 # Set filename
 filename = f"./data/{today}_segments.csv"
 # Create csv of link segments
