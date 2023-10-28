@@ -23,6 +23,8 @@ PRESENT_SESSION = 2023
 SESSIONS_LIST = list(range(1946, PRESENT_SESSION + 1))
 # No records available for 1964
 SESSIONS_LIST.remove(1964)
+# Records with data missing from archive
+MISSING_RECORDS = ["454783"]
 # Max no. of records was 170, in 1952
 MAX_LINKS_PER_SESSION = 170
 # Time delays in seconds
@@ -158,6 +160,9 @@ for session in tqdm(SESSIONS_LIST, desc="Fetching links:"):
         
         # Iterate link_loc by LINKS_PER_PAGE
         link_loc += LINKS_PER_PAGE
+
+for missing_segment in MISSING_RECORDS:
+    segments_master.remove(missing_segment)
 
 ##########################################################################
 # Save to csv

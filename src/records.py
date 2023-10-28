@@ -5,34 +5,39 @@ from bs4.element import ResultSet
 from datetime import datetime
 from tqdm import tqdm
 
-# NOTE: update before running
-LATEST_VERSION = "./data/20231028_0355_records.csv"
-LATEST_PROCESSED_SEGMENTS = "./data/20231028_0355_processed_segments.txt"
-LATEST_LINKS = "./data/20231026_1158_link_segments.csv"
-ENCODING = "utf-8"
-
 ##########################################################################
-# Prepare URLs and requests
+# Prepare files
 ##########################################################################
 
 logging.basicConfig(filename="./logs/error.log", 
                     level=logging.INFO,
                     format="%(asctime)s - %(levelname)s: %(message)s")
+
+ENCODING = "utf-8"
+DATA_FOLDER = "./data"
+
+# NOTE: update prefix before running
+prefix = "20231028_2114"
+
+# Get latest versions
+LATEST_RECORDS = f"{DATA_FOLDER}/{prefix}_records.csv"
+LATEST_PROCESSED_SEGMENTS = f"{DATA_FOLDER}/{prefix}_processed_segments.txt"
+LATEST_LINKS = f"{DATA_FOLDER}/20231026_1158_link_segments.csv"
+
+##########################################################################
+# Prepare URLs and requests
+##########################################################################
+
 BASE_URL = "https://digitallibrary.un.org/record/"
 # Store URL segments in list
 SEGMENTS = []
 # Read csv of link segments
-filename = LATEST_LINKS
-with open(filename, "r") as file:
+with open(LATEST_LINKS, "r") as file:
     csv_reader = csv.reader(file)
     # Skip header row
     header = next(csv_reader)
     for row in csv_reader:
         SEGMENTS.append(row[0])
-
-# Create current text file if it doesn't exist
-with open(LATEST_PROCESSED_SEGMENTS, "a", encoding=ENCODING) as file:
-    pass
 
 # Read csv of link segments previously processed
 with open(LATEST_PROCESSED_SEGMENTS, "r", encoding=ENCODING) as file:
@@ -44,6 +49,10 @@ END = min(START + BATCH_SIZE, len(SEGMENTS))
 # Time delays in seconds
 MIN_DELAY = 2
 MAX_DELAY = 8
+# Response codes
+GOOD_RESPONSES = [200]
+RETRY_RESPONSES = [429]
+BAD_RESPONSES = [400, 401, 403, 404, 500, 502, 504]
 
 # ~~~ Header data ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -186,7 +195,8 @@ def sort_countries(raw_data: ResultSet) -> None:
 # test_segments = [
     # "4016932",  # general record 
     # "671259",  # missing figure
-    # "3996092"  # encoding "\u0130"
+    # "3996092",  # encoding "\u0130"
+    # "454783"  # no voting data
 # ]
 # Random tests
 # sample = random.sample(SEGMENTS, 20)
@@ -220,14 +230,26 @@ for segment in tqdm(SEGMENTS[START:END], desc="Fetching records"):
     
     # Example record URL "https://digitallibrary.un.org/record/4016932?ln=en"
     record_URL = BASE_URL + segment
-    record_html = requests.get(record_URL, headers=header)
     
+    # Make request and catch response errors and retry
+    for i in range(4):
+        record_html = requests.get(record_URL, headers=header) 
+    
+        if isinstance(record_html, requests.models.Response):
+            
+            if record_html.status_code not in RETRY_RESPONSES:
+                break
+            else:  # Exponential delay before each retry
+                time.sleep(10 + 5**i)
+        
     if isinstance(record_html, requests.models.Response):
-        if record_html.status_code == 502:
-            logging.error(f"502 Bad Gateway response; url: {record_URL}; counter: {counter}")
+        
+        if record_html.status_code in BAD_RESPONSES:
+            logging.error(f"{record_html.status_code} response; url: {record_URL}; counter: {counter}")
             break
-        elif record_html.status_code != 200:
+        elif record_html.status_code not in GOOD_RESPONSES:
             logging.info(f"{record_html.status_code} response; url: {record_URL}; counter: {counter}")
+            break
     
     # Extract and parse html source code
     record_URL_source_code = record_html.text
@@ -250,9 +272,10 @@ for segment in tqdm(SEGMENTS[START:END], desc="Fetching records"):
         if len(voting_figures) != 5:
             voting_figures = get_figures_granular(voting_summary)
     
-    except KeyError:
-        # Set all five totals to nan if none present
-        voting_figures = [float("nan")]*5
+    except KeyError as e:
+        logging.info(f"Data Issue: {str(e)}; url: {record_URL}; counter: {counter}")
+        # Skip record if voting data is missing
+        continue
     
     try:
         # Extract vote and country string from data
@@ -267,7 +290,8 @@ for segment in tqdm(SEGMENTS[START:END], desc="Fetching records"):
         # Sort countries into lists by vote record
         sort_countries(vote_by_country)
     
-    except ValueError:
+    except ValueError as e:
+        logging.info(f"Data issue: {str(e)}; url: {record_URL}; counter: {counter}")
         # Set all to Undisclosed if breakdown not provided
         yes_countries = ["Undisclosed"]
         no_countries = ["Undisclosed"]
@@ -276,27 +300,33 @@ for segment in tqdm(SEGMENTS[START:END], desc="Fetching records"):
     
     # Set record_name to resolution reference
     resolution = str(metadata_dict.get("Resolution", "None"))
-    # Add dict of current resolution to main resolutions_dict
-    resolutions_dict[resolution] = {"Resolution": resolution,
-                                    "Vote Date": str(metadata_dict.get("Vote date", "None")), 
-                                    "Num Yes": int(voting_figures[0]), 
-                                    "Num No": int(voting_figures[1]), 
-                                    "Num Abstentions": int(voting_figures[2]), 
-                                    "Num Non-Voting": int(voting_figures[3]), 
-                                    "Total Votes": int(voting_figures[4]), 
-                                    "Record URL": str(record_URL),
-                                    "Segment": segment,
-                                    "Title": str(metadata_dict.get("Title", "None")), 
-                                    "Yes Votes": yes_countries, 
-                                    "No Votes": no_countries, 
-                                    "Abstentions": abstention_countries, 
-                                    "Non-Voting": non_voting_countries, 
-                                    "Agenda": str(metadata_dict.get("Agenda", "None")),
-                                    "Meeting Record": str(metadata_dict.get("Meeting record", "None")), 
-                                    "Draft Resolution": str(metadata_dict.get("Draft resolution", "None")), 
-                                    "Committee Report": str(metadata_dict.get("Committee report", "None")),
-                                    "Note": str(metadata_dict.get("Note", "None"))
-                                    }
+    
+    try:
+        # Add dict of current resolution to main resolutions_dict
+        resolutions_dict[resolution] = {"Resolution": resolution,
+                                        "Vote Date": str(metadata_dict.get("Vote date", "None")), 
+                                        "Num Yes": int(voting_figures[0]), 
+                                        "Num No": int(voting_figures[1]), 
+                                        "Num Abstentions": int(voting_figures[2]), 
+                                        "Num Non-Voting": int(voting_figures[3]), 
+                                        "Total Votes": int(voting_figures[4]), 
+                                        "Record URL": str(record_URL),
+                                        "Segment": segment,
+                                        "Title": str(metadata_dict.get("Title", "None")), 
+                                        "Yes Votes": yes_countries, 
+                                        "No Votes": no_countries, 
+                                        "Abstentions": abstention_countries, 
+                                        "Non-Voting": non_voting_countries, 
+                                        "Agenda": str(metadata_dict.get("Agenda", "None")),
+                                        "Meeting Record": str(metadata_dict.get("Meeting record", "None")), 
+                                        "Draft Resolution": str(metadata_dict.get("Draft resolution", "None")), 
+                                        "Committee Report": str(metadata_dict.get("Committee report", "None")),
+                                        "Note": str(metadata_dict.get("Note", "None"))
+                                        }
+    except Exception as e:
+        logging.info(f"Data issue: {str(e)}; url: {record_URL}; counter: {counter}")
+        # Skip record if voting data is missing
+        continue
     
     processed_segments.append(segment)
     counter += 1
@@ -329,13 +359,13 @@ for res, metadata in resolutions_dict.items():
 current_datetime = datetime.now().strftime("%Y%m%d_%H%M")
 # Set filename
 new_version = f"./data/{current_datetime}_records.csv"
-# Check whether LATEST_VERSION exists
-file_exists = os.path.isfile(LATEST_VERSION)
+# Check whether LATEST_RECORDS exists
+file_exists = os.path.isfile(LATEST_RECORDS)
 
 if file_exists:
     try:
         # Read the existing CSV file
-        with open(LATEST_VERSION, "r", encoding=ENCODING, newline="") as file:
+        with open(LATEST_RECORDS, "r", encoding=ENCODING, newline="") as file:
             reader = csv.reader(file)
             data = list(reader)
     
@@ -368,9 +398,12 @@ else:
     except Exception as e:
         logging.exception(f"Error: {str(e)}; url: {record_URL}; counter: {counter}")
 
-# Update file of processed URLs for later resumption
+# Create new file of processed URLs for later resumption
 with open(f"./data/{current_datetime}_processed_segments.txt", "w", encoding=ENCODING) as file:
     for segment in processed_segments:
         file.write(f"{segment}\n")
         
 print(f"{counter} record{'s' if counter != 1 else ''} saved to csv")
+
+# Confirm no duplicates exist
+assert len(processed_segments) == len(set(processed_segments))
