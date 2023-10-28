@@ -6,8 +6,8 @@ from datetime import datetime
 from tqdm import tqdm
 
 # NOTE: update before running
-LATEST_VERSION = "./data/20231028_0018_records.csv"
-LATEST_PROCESSED_SEGMENTS = "./data/20231028_0018_processed_segments.txt"
+LATEST_VERSION = "./data/20231028_0355_records.csv"
+LATEST_PROCESSED_SEGMENTS = "./data/20231028_0355_processed_segments.txt"
 LATEST_LINKS = "./data/20231026_1158_link_segments.csv"
 ENCODING = "utf-8"
 
@@ -44,8 +44,6 @@ END = min(START + BATCH_SIZE, len(SEGMENTS))
 # Time delays in seconds
 MIN_DELAY = 2
 MAX_DELAY = 8
-# Counter to track progress
-counter = 0
 
 # ~~~ Header data ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -199,6 +197,8 @@ def sort_countries(raw_data: ResultSet) -> None:
 
 # Master dict for resolution records
 resolutions_dict = {}
+# Counter to track progress
+counter = 0
 
 # for segment in test_segments:
 # for segment in sample:
@@ -227,7 +227,7 @@ for segment in tqdm(SEGMENTS[START:END], desc="Fetching records"):
             logging.error(f"502 Bad Gateway response; url: {record_URL}; counter: {counter}")
             break
         elif record_html.status_code != 200:
-            logging.info(f"Response status code {record_html.status_code}; url: {record_URL}; counter: {counter}")
+            logging.info(f"{record_html.status_code} response; url: {record_URL}; counter: {counter}")
     
     # Extract and parse html source code
     record_URL_source_code = record_html.text
@@ -236,9 +236,9 @@ for segment in tqdm(SEGMENTS[START:END], desc="Fetching records"):
     # Voting metadata contained in multiple <div class="metadata-row">
     keys = raw_record.find_all("span", class_="title col-xs-12 col-sm-3 col-md-2")
     values = raw_record.find_all("span", class_="value col-xs-12 col-sm-9 col-md-10")
+    
     # Create dict of metadata
     metadata_dict = {}
-    
     for key, value in zip(keys, values):
         metadata_dict[key.text.strip()] = value.text
     
