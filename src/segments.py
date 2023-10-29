@@ -171,7 +171,7 @@ for missing_segment in MISSING_RECORDS:
 # Get current date in the format "yyyymmdd"
 today = datetime.now().strftime("%Y%m%d_%H%M")
 # Set filename
-filename = f"./data/{today}_segments.csv"
+filename = f"./data/{today}_links.csv"
 # Create csv of link segments
 with open(filename, 'w', newline="") as file:
     writer = csv.writer(file)

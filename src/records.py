@@ -22,7 +22,7 @@ prefix = "20231028_2114"
 # Get latest versions
 LATEST_RECORDS = f"{DATA_FOLDER}/{prefix}_records.csv"
 LATEST_PROCESSED_SEGMENTS = f"{DATA_FOLDER}/{prefix}_processed_segments.txt"
-LATEST_LINKS = f"{DATA_FOLDER}/20231026_1158_link_segments.csv"
+LATEST_LINKS = f"{DATA_FOLDER}/20231026_1158_links.csv"
 
 ##########################################################################
 # Prepare URLs and requests
@@ -174,17 +174,17 @@ def sort_countries(raw_data: ResultSet) -> None:
         # Separate vote and name values
         split_values = raw[i].split(maxsplit=1)
         # Yes votes
-        if split_values[0] == "Y" and len(split_values) == 2:
-            yes_countries.append(split_values[1])
+        if split_values[0].upper() == "Y" and len(split_values) == 2:
+            yes_countries.append(split_values[1].upper())
         # No votes
-        elif split_values[0] == "N" and len(split_values) == 2:
-            no_countries.append(split_values[1])
+        elif split_values[0].upper() == "N" and len(split_values) == 2:
+            no_countries.append(split_values[1].upper())
         # Abstentions
-        elif split_values[0] == "A" and len(split_values) == 2:
-            abstention_countries.append(split_values[1])
+        elif split_values[0].upper() == "A" and len(split_values) == 2:
+            abstention_countries.append(split_values[1].upper())
         # Non-voting
         else:
-            non_voting_countries.append(raw[i].strip())
+            non_voting_countries.append(raw[i].strip().upper())
 
 
 ##########################################################################
