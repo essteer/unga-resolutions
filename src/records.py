@@ -17,7 +17,7 @@ ENCODING = "utf-8"
 DATA_FOLDER = "./data"
 
 # NOTE: update prefix before running
-prefix = "20231028_2114"
+prefix = "20231028_2318"
 
 # Get latest versions
 LATEST_RECORDS = f"{DATA_FOLDER}/{prefix}_records.csv"
