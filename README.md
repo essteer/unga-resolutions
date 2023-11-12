@@ -16,9 +16,11 @@ Eswatini and Swaziland refer to the same territorial and political entity, and t
 
 Most examples fit this pattern; a shortlist of examples includes:
 
-- "BYELORUSSIAN SSR" -> "BELARUS",
-- "CZECH REPUBLIC" -> "CZECHIA", and
-- "SIAM" -> "THAILAND".
+| #   | Name on UNGA voting Record | Name used in this dataset |
+| --- | -------------------------- | ------------------------- |
+| 01  | 'BYELORUSSIAN SSR'         | BELARUS                   |
+| 02  | 'CZECH REPUBLIC'           | CZECHIA                   |
+| 03  | 'SIAM'                     | THAILAND                  |
 
 **Special characters**
 
