@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import csv
+import logging
 import numpy as np
 import pandas as pd
 import re
@@ -34,25 +35,24 @@ for category in vote_categories:
                 continue
             elif country not in countries:
                 countries.append(country)
-                
-# TODO: Classify 'CONGO' entries as either DRC or ROC, as relevant
-# TODO: Decide how to line up USSR vs Russian Federation records
-
+      
 aliases = {'BYELORUSSIAN SSR': "BELARUS", 
            'BOLIVIA (PLURINATIONAL STATE OF)': "BOLIVIA", 
            'BRUNEI DARUSSALAM': "BRUNEI", 
            'CABO VERDE': "CAPE VERDE", 
            'CENTRAL AFRICAN EMPIRE': "CENTRAL AFRICAN REPUBLIC", 
            'CEYLON': "SRI LANKA", 
-           'CONGO (BRAZZAVILLE)': "CONGO (REPUBLIC OF)", 
-           'CONGO (LEOPOLDVILLE)': "CONGO (DEMOCRATIC REPUBLIC OF)", 
+           'CONGO': "CONGO (ROC)", 
+           'CONGO (BRAZZAVILLE)': "CONGO (ROC)", 
+           'CONGO (DEMOCRATIC REPUBLIC OF)': "CONGO (DRC)",
+           'CONGO (LEOPOLDVILLE)': "CONGO (DRC)", 
            '"CÔTE D\'IVOIRE"': "IVORY COAST", 
            '"COTE D\'IVOIRE"': "IVORY COAST", 
            'CZECH REPUBLIC': "CZECHIA", 
            'DAHOMEY': "BENIN", 
            'DEMOCRATIC KAMPUCHEA': "CAMBODIA", 
            '"DEMOCRATIC PEOPLE\'S REPUBLIC OF KOREA"': "NORTH KOREA", 
-           'DEMOCRATIC REPUBLIC OF THE CONGO': "CONGO (DEMOCRATIC REPUBLIC OF)", 
+           'DEMOCRATIC REPUBLIC OF THE CONGO': "CONGO (DRC)", 
            'GERMAN DEMOCRATIC REPUBLIC': "EAST GERMANY", 
            'FEDERAL REPUBLIC OF': "GERMANY", 
            'KHMER REPUBLIC': "CAMBODIA", 
@@ -70,7 +70,7 @@ aliases = {'BYELORUSSIAN SSR': "BELARUS",
            'RUSSIAN FEDERATION': "RUSSIA", 
            'SAINT CHRISTOPHER AND NEVIS': "ST KITTS AND NEVIS", 
            'SIAM': "THAILAND", 
-           'SURINAM': 'SURINAME', 
+           'SURINAM': "SURINAME", 
            'SWAZILAND': "ESWATINI", 
            'SYRIAN ARAB REPUBLIC': "SYRIA", 
            'TANGANYIKA': "TANZANIA",   
@@ -82,12 +82,13 @@ aliases = {'BYELORUSSIAN SSR': "BELARUS",
            'UNITED REPUBLIC OF CAMEROON': "CAMEROON", 
            'UNITED REPUBLIC OF TANZANIA': "TANZANIA", 
            'UPPER VOLTA': "BURKINA FASO", 
+           'USSR': "RUSSIA", 
            'VENEZUELA (BOLIVARIAN REPUBLIC OF)': "VENEZUELA", 
            'VIET NAM': "VIETNAM", 
-           'ZAIRE': "CONGO (DEMOCRATIC REPUBLIC OF)", 
+           'ZAIRE': "CONGO (DRC)", 
            'ZANZIBAR': "TANZANIA"}
 
-countries_renamed = [aliases[country] if country in aliases else country for country in countries]
+countries_renamed = [aliases[country] if country.upper() in aliases else country.upper() for country in countries]
 countries_renamed = list(set(countries_renamed))
 countries_renamed.sort()
 
