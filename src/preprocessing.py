@@ -20,7 +20,51 @@ prefix = "20231028_2318"
 df = pd.read_csv(f"{DATA_FOLDER}/{prefix}_records.csv")
 
 ##########################################################################
-# Get list of country names and cleanup
+# Inspect data
+##########################################################################
+
+df.info()
+df.describe()
+
+##########################################################################
+# Remove unused features
+##########################################################################
+"""
+Unrequired columns:
+Record URL, Segment, Agenda, Meeting Record,
+Draft Resolution, Committee Report, Note
+"""
+columns = [
+    "Resolution", 
+    "Vote Date", 
+    "Num Yes", 
+    "Num No", 
+    "Num Abstentions", 
+    "Num Non-Voting", 
+    "Total Votes", 
+    "Title", 
+    "Yes Votes", 
+    "No Votes", 
+    "Abstentions", 
+    "Non-Voting" 
+]
+
+df = df[columns]
+df.info()
+df.describe()
+
+##########################################################################
+# Convert dates and sort
+##########################################################################
+
+df["Vote Date"] = pd.to_datetime(df["Vote Date"], dayfirst=True)
+# Sort by date, then by resolution reference
+df = df.sort_values(by=["Vote Date", "Resolution"])
+# Reset index and drop previous index
+df = df.reset_index(drop=True)
+
+##########################################################################
+# Get list of country names
 ##########################################################################
 
 countries = []
@@ -35,7 +79,13 @@ for category in vote_categories:
                 continue
             elif country not in countries:
                 countries.append(country)
-      
+
+##########################################################################
+# Consolidate country names
+##########################################################################
+"""
+NOTE: use a merge function here later to consolidate vote records
+"""
 aliases = {'BYELORUSSIAN SSR': "BELARUS", 
            'BOLIVIA (PLURINATIONAL STATE OF)': "BOLIVIA", 
            'BRUNEI DARUSSALAM': "BRUNEI", 
@@ -93,9 +143,8 @@ countries_renamed = list(set(countries_renamed))
 countries_renamed.sort()
 
 ##########################################################################
-#
+# 
 ##########################################################################
 
 
-
-
+            
