@@ -4,6 +4,7 @@ import logging
 import numpy as np
 import pandas as pd
 import re
+from tqdm import tqdm
 
 ##########################################################################
 # Prepare files
@@ -23,8 +24,8 @@ df = pd.read_csv(f"{DATA_FOLDER}/{prefix}_records.csv")
 # Inspect data
 ##########################################################################
 
-df.info()
-df.describe()
+# df.info()
+# df.describe()
 
 ##########################################################################
 # Remove unused features
@@ -49,8 +50,8 @@ columns = [
 ]
 
 df = df[columns]
-df.info()
-df.describe()
+# df.info()
+# df.describe()
 
 ##########################################################################
 # Clean data
@@ -64,6 +65,9 @@ df["Vote Date"] = pd.to_datetime(df["Vote Date"], dayfirst=True)
 df = df.sort_values(by=["Vote Date", "Resolution"])
 # Reset index and drop previous index
 df = df.reset_index(drop=True)
+
+df.info()
+df.describe()
 
 ##########################################################################
 # Format country entries and get list of unique countries
@@ -144,6 +148,7 @@ def process_country_names(column):
         'TURKEY': "TURKIYE", 
         'UKRAINIAN SSR': "UKRAINE", 
         'UNION OF SOUTH AFRICA': "SOUTH AFRICA",
+        'UNITED ARAB REPUBLIC': "EGYPT",
         'UNITED REPUBLIC OF CAMEROON': "CAMEROON", 
         'UNITED REPUBLIC OF TANZANIA': "TANZANIA", 
         'UPPER VOLTA': "BURKINA FASO", 
@@ -171,14 +176,33 @@ vote_categories = ["Yes Votes", "No Votes", "Abstentions", "Non-Voting"]
 for vote_category in vote_categories:
     df[vote_category] = df[vote_category].apply(process_country_names)
 
+countries_renamed = sorted(countries_renamed)
+
+# Save updated country names to file
+with open(f"./data/member_states_consolidated.csv", "w", encoding=ENCODING) as file:
+    for country in countries_renamed:
+        file.write(f"{country}\n")
+
 ##########################################################################
-# 
+# Extract voting data into country columns
 ##########################################################################
 
-# # Create columns from renamed countries
-# country_columns = {country: ["N/A"] * len(df) for country in countries_renamed}
-# # Initialise columns on right of dataframe
-# df = pd.concat([df, pd.DataFrame(country_columns)], axis=1)
+# Create DataFrame with new country columns
+country_columns = {country: ["N/A"]*len(df) for country in countries_renamed}
+new_df = pd.DataFrame(country_columns)
+# Concatenate new DataFrame to the original
+df = pd.concat([df, new_df], axis=1)
 
+vote_abbreviations = {
+    "Yes Votes": "Y",
+    "No Votes": "N", 
+    "Abstentions": "A", 
+    "Non-Voting": "X"
+}
 
-
+# Populate country columns
+df_copy = df.copy()
+for i in tqdm(range(len(df_copy)), desc="Counting votes..."):
+    for category in vote_categories:
+        for country in df_copy.loc[i, category]:
+            df.loc[i, country] = vote_abbreviations[category]
