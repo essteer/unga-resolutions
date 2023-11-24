@@ -32,9 +32,34 @@ Entities with characters in their names beyond the 26 letters of the English alp
 | 02  | 'TÜRKİYE'                  | TURKIYE                   |
 | 03  | 'TURKEY'                   | TURKIYE                   |
 
+**Egypt and Syria**
+
+Egypt and Syria held separate UN Member State status until their unification as the United Arab Republic (UAR) on 1 February 1958.
+
+A total of 244 UNGA resolutions were passed from that time, up until Syria exited the UAR via a military coup on 28 September 1961. Of those 244 resolutions, votes were disclosed for just 65.
+
+Following Syria's independence it reappeared as Syria on UNGA voting records; Egypt retained UAR as its official title until 1971, when it renamed itself as Egypt.
+
+To achieve continuity of data for these two states, I have adopted the following policy:
+
+- All UAR votes from 1958 to 1970 (308 total) are counted as votes by Egypt.
+- All UAR votes from 1958 to 25/08/1961 (65 total) are additionally counted as votes by Syria.
+
+The table below details the dates of these changes as visible in the voting records.
+
+| #   | Date       | Resolution         | Description                                         |
+| --- | ---------- | ------------------ | --------------------------------------------------- |
+| 01  | 14/12/1957 | A/RES/1226(XII)    | Last pre-UAR vote in which Egypt and Syria appear   |
+| 02  | 01/02/1958 | N/A                | UAR established                                     |
+| 03  | 21/08/1958 | A/RES/1238(ES-III) | First appearance of UAR in place of Egypt and Syria |
+| 04  | 28/09/1961 | N/A                | Syria declared independence following military coup |
+| 05  | 23/10/1961 | A/RES/1627(XVI)    | Syria returns to record as voting UN Member State   |
+| 06  | 17/12/1970 | A/RES/2750(XXV)[C] | Last vote with UAR recorded as a UN Member State    |
+| 07  | 21/09/1971 | A/RES/2753(XXVI)   | Egypt returns to record as voting UN Member State   |
+
 **Tanzania**
 
-Tanzania was taken as a special case: Tanganyika and Zanzibar gained independence in 1961 and 1963, respectively, and in 1964 they merged to become the United Republic of Tanzania.
+Tanzania was taken as another special case: Tanganyika and Zanzibar gained independence in 1961 and 1963, respectively, and in 1964 they merged to become the United Republic of Tanzania.
 
 Zanzibar was identified with just eight UNGA resolutions, all between December 1962 and December 1963. It was the subject of A/RES/1811(XVII), passed on 17/12/1962, for which voting breakdowns were not accessible. Of the remaining seven resolutions, Zanzibar was recorded as an "Abstention" for A/RES/1983(XVIII), on 17/12/1963, and "Non-voting" for six, passed on either 16/12/1963 or 17/12/1963.
 
@@ -65,56 +90,57 @@ A full list of name conversions is contained within the table below; the second 
 
 Finally, the conversions in the third column have been made based on the principles outlined above, and do not reflect any political stance on my part. Should any of these conversions be in error, corrections are welcome.
 
-| #   | Name on UNGA voting Record                  | Name used in this dataset |
-| --- | ------------------------------------------- | ------------------------- |
-| 01  | 'BYELORUSSIAN SSR'                          | BELARUS                   |
-| 02  | 'BOLIVIA (PLURINATIONAL STATE OF)'          | BOLIVIA                   |
-| 03  | 'BRUNEI DARUSSALAM'                         | BRUNEI                    |
-| 04  | 'CABO VERDE'                                | CAPE VERDE                |
-| 05  | 'CENTRAL AFRICAN EMPIRE'                    | CENTRAL AFRICAN REPUBLIC  |
-| 06  | 'CEYLON'                                    | SRI LANKA                 |
-| 07  | 'CONGO'                                     | CONGO (ROC)               |
-| 08  | 'CONGO (BRAZZAVILLE)'                       | CONGO (ROC)               |
-| 09  | 'CONGO (DEMOCRATIC REPUBLIC OF)'            | CONGO (DRC)               |
-| 10  | 'CONGO (LEOPOLDVILLE)'                      | CONGO (DRC)               |
-| 11  | '"CÔTE D\'IVOIRE"'                          | IVORY COAST               |
-| 12  | '"COTE D\'IVOIRE"'                          | IVORY COAST               |
-| 13  | 'CZECH REPUBLIC'                            | CZECHIA                   |
-| 14  | 'DAHOMEY'                                   | BENIN                     |
-| 15  | 'DEMOCRATIC KAMPUCHEA'                      | CAMBODIA                  |
-| 16  | '"DEMOCRATIC PEOPLE\'S REPUBLIC OF KOREA"'  | NORTH KOREA               |
-| 17  | 'DEMOCRATIC REPUBLIC OF THE CONGO'          | CONGO (DRC)               |
-| 18  | 'GERMAN DEMOCRATIC REPUBLIC'                | EAST GERMANY              |
-| 19  | 'GERMANY, FEDERAL REPUBLIC OF'              | GERMANY                   |
-| 20  | 'KHMER REPUBLIC'                            | CAMBODIA                  |
-| 21  | 'IRAN (ISLAMIC REPUBLIC OF)'                | IRAN                      |
-| 22  | '"LAO PEOPLE\'S DEMOCRATIC REPUBLIC"'       | LAOS                      |
-| 23  | '"LAO PEOPLE\'s DEMOCRATIC REPUBLIC"'       | LAOS                      |
-| 24  | 'LAO'                                       | LAOS                      |
-| 25  | 'LIBYAN ARAB JAMAHIRIYA'                    | LIBYA                     |
-| 26  | 'LIBYAN ARAB REPUBLIC'                      | LIBYA                     |
-| 27  | 'MALDIVE ISLANDS'                           | MALDIVES                  |
-| 28  | 'MICRONESIA (FEDERATED STATES OF)'          | MICRONESIA                |
-| 29  | 'PHILIPPINE REPUBLIC'                       | PHILIPPINES               |
-| 30  | 'REPUBLIC OF KOREA'                         | SOUTH KOREA               |
-| 31  | 'REPUBLIC OF MOLDOVA'                       | MOLDOVA                   |
-| 32  | 'RUSSIAN FEDERATION'                        | RUSSIA                    |
-| 33  | 'SAINT CHRISTOPHER AND NEVIS'               | ST KITTS AND NEVIS        |
-| 34  | 'SIAM'                                      | THAILAND                  |
-| 35  | 'SURINAM'                                   | SURINAME                  |
-| 36  | 'SWAZILAND'                                 | ESWATINI                  |
-| 37  | 'SYRIAN ARAB REPUBLIC'                      | SYRIA                     |
-| 38  | 'TANGANYIKA'                                | TANZANIA                  |
-| 39  | 'THE FORMER YUGOSLAV REPUBLIC OF MACEDONIA' | NORTH MACEDONIA           |
-| 40  | 'TÜRKİYE'                                   | TURKIYE                   |
-| 41  | 'TURKEY'                                    | TURKIYE                   |
-| 42  | 'UKRAINIAN SSR'                             | UKRAINE                   |
-| 43  | 'UNION OF SOUTH AFRICA'                     | SOUTH AFRICA              |
-| 44  | 'UNITED REPUBLIC OF CAMEROON'               | CAMEROON                  |
-| 45  | 'UNITED REPUBLIC OF TANZANIA'               | TANZANIA                  |
-| 46  | 'UPPER VOLTA'                               | BURKINA FASO              |
-| 47  | 'USSR'                                      | RUSSIA                    |
-| 48  | 'VENEZUELA (BOLIVARIAN REPUBLIC OF)'        | VENEZUELA                 |
-| 49  | 'VIET NAM'                                  | VIETNAM                   |
-| 50  | 'ZAIRE'                                     | CONGO (DRC)               |
-| 51  | 'ZANZIBAR'                                  | TANZANIA                  |
+| #   | Name on UNGA voting Record                  | Name used in this dataset | Note                         |
+| --- | ------------------------------------------- | ------------------------- | ---------------------------- |
+| 01  | 'BYELORUSSIAN SSR'                          | BELARUS                   |                              |
+| 02  | 'BOLIVIA (PLURINATIONAL STATE OF)'          | BOLIVIA                   |                              |
+| 03  | 'BRUNEI DARUSSALAM'                         | BRUNEI                    |                              |
+| 04  | 'CABO VERDE'                                | CAPE VERDE                |                              |
+| 05  | 'CENTRAL AFRICAN EMPIRE'                    | CENTRAL AFRICAN REPUBLIC  |                              |
+| 06  | 'CEYLON'                                    | SRI LANKA                 |                              |
+| 07  | 'CONGO'                                     | CONGO (ROC)               |                              |
+| 08  | 'CONGO (BRAZZAVILLE)'                       | CONGO (ROC)               |                              |
+| 09  | 'CONGO (DEMOCRATIC REPUBLIC OF)'            | CONGO (DRC)               |                              |
+| 10  | 'CONGO (LEOPOLDVILLE)'                      | CONGO (DRC)               |                              |
+| 11  | '"CÔTE D\'IVOIRE"'                          | IVORY COAST               |                              |
+| 12  | '"COTE D\'IVOIRE"'                          | IVORY COAST               |                              |
+| 13  | 'CZECH REPUBLIC'                            | CZECHIA                   |                              |
+| 14  | 'DAHOMEY'                                   | BENIN                     |                              |
+| 15  | 'DEMOCRATIC KAMPUCHEA'                      | CAMBODIA                  |                              |
+| 16  | '"DEMOCRATIC PEOPLE\'S REPUBLIC OF KOREA"'  | NORTH KOREA               |                              |
+| 17  | 'DEMOCRATIC REPUBLIC OF THE CONGO'          | CONGO (DRC)               |                              |
+| 18  | 'GERMAN DEMOCRATIC REPUBLIC'                | EAST GERMANY              |                              |
+| 19  | 'GERMANY, FEDERAL REPUBLIC OF'              | GERMANY                   |                              |
+| 20  | 'KHMER REPUBLIC'                            | CAMBODIA                  |                              |
+| 21  | 'IRAN (ISLAMIC REPUBLIC OF)'                | IRAN                      |                              |
+| 22  | '"LAO PEOPLE\'S DEMOCRATIC REPUBLIC"'       | LAOS                      |                              |
+| 23  | '"LAO PEOPLE\'s DEMOCRATIC REPUBLIC"'       | LAOS                      |                              |
+| 24  | 'LAO'                                       | LAOS                      |                              |
+| 25  | 'LIBYAN ARAB JAMAHIRIYA'                    | LIBYA                     |                              |
+| 26  | 'LIBYAN ARAB REPUBLIC'                      | LIBYA                     |                              |
+| 27  | 'MALDIVE ISLANDS'                           | MALDIVES                  |                              |
+| 28  | 'MICRONESIA (FEDERATED STATES OF)'          | MICRONESIA                |                              |
+| 29  | 'PHILIPPINE REPUBLIC'                       | PHILIPPINES               |                              |
+| 30  | 'REPUBLIC OF KOREA'                         | SOUTH KOREA               |                              |
+| 31  | 'REPUBLIC OF MOLDOVA'                       | MOLDOVA                   |                              |
+| 32  | 'RUSSIAN FEDERATION'                        | RUSSIA                    |                              |
+| 33  | 'SAINT CHRISTOPHER AND NEVIS'               | ST KITTS AND NEVIS        |                              |
+| 34  | 'SIAM'                                      | THAILAND                  |                              |
+| 35  | 'SURINAM'                                   | SURINAME                  |                              |
+| 36  | 'SWAZILAND'                                 | ESWATINI                  |                              |
+| 37  | 'SYRIAN ARAB REPUBLIC'                      | SYRIA                     |                              |
+| 38  | 'TANGANYIKA'                                | TANZANIA                  | See "Tanzania", above        |
+| 39  | 'THE FORMER YUGOSLAV REPUBLIC OF MACEDONIA' | NORTH MACEDONIA           |                              |
+| 40  | 'TÜRKİYE'                                   | TURKIYE                   |                              |
+| 41  | 'TURKEY'                                    | TURKIYE                   |                              |
+| 42  | 'UKRAINIAN SSR'                             | UKRAINE                   |                              |
+| 43  | 'UNION OF SOUTH AFRICA'                     | SOUTH AFRICA              |                              |
+| 44  | 'UNITED ARAB REPUBLIC'                      | EGYPT                     | See "Egypt and Syria", above |
+| 45  | 'UNITED REPUBLIC OF CAMEROON'               | CAMEROON                  |                              |
+| 46  | 'UNITED REPUBLIC OF TANZANIA'               | TANZANIA                  |                              |
+| 47  | 'UPPER VOLTA'                               | BURKINA FASO              |                              |
+| 48  | 'USSR'                                      | RUSSIA                    |                              |
+| 49  | 'VENEZUELA (BOLIVARIAN REPUBLIC OF)'        | VENEZUELA                 |                              |
+| 50  | 'VIET NAM'                                  | VIETNAM                   |                              |
+| 51  | 'ZAIRE'                                     | CONGO (DRC)               |                              |
+| 52  | 'ZANZIBAR'                                  | TANZANIA                  | See "Tanzania", above        |
