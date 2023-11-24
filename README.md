@@ -92,55 +92,56 @@ Finally, the conversions in the third column have been made based on the princip
 
 | #   | Name on UNGA voting Record                  | Name used in this dataset | Note                         |
 | --- | ------------------------------------------- | ------------------------- | ---------------------------- |
-| 01  | 'BYELORUSSIAN SSR'                          | BELARUS                   |                              |
-| 02  | 'BOLIVIA (PLURINATIONAL STATE OF)'          | BOLIVIA                   |                              |
-| 03  | 'BRUNEI DARUSSALAM'                         | BRUNEI                    |                              |
-| 04  | 'CABO VERDE'                                | CAPE VERDE                |                              |
-| 05  | 'CENTRAL AFRICAN EMPIRE'                    | CENTRAL AFRICAN REPUBLIC  |                              |
-| 06  | 'CEYLON'                                    | SRI LANKA                 |                              |
-| 07  | 'CONGO'                                     | CONGO (ROC)               |                              |
-| 08  | 'CONGO (BRAZZAVILLE)'                       | CONGO (ROC)               |                              |
-| 09  | 'CONGO (DEMOCRATIC REPUBLIC OF)'            | CONGO (DRC)               |                              |
-| 10  | 'CONGO (LEOPOLDVILLE)'                      | CONGO (DRC)               |                              |
-| 11  | '"CÔTE D\'IVOIRE"'                          | IVORY COAST               |                              |
-| 12  | '"COTE D\'IVOIRE"'                          | IVORY COAST               |                              |
-| 13  | 'CZECH REPUBLIC'                            | CZECHIA                   |                              |
-| 14  | 'DAHOMEY'                                   | BENIN                     |                              |
-| 15  | 'DEMOCRATIC KAMPUCHEA'                      | CAMBODIA                  |                              |
-| 16  | '"DEMOCRATIC PEOPLE\'S REPUBLIC OF KOREA"'  | NORTH KOREA               |                              |
-| 17  | 'DEMOCRATIC REPUBLIC OF THE CONGO'          | CONGO (DRC)               |                              |
-| 18  | 'GERMAN DEMOCRATIC REPUBLIC'                | EAST GERMANY              |                              |
-| 19  | 'GERMANY, FEDERAL REPUBLIC OF'              | GERMANY                   |                              |
-| 20  | 'KHMER REPUBLIC'                            | CAMBODIA                  |                              |
-| 21  | 'IRAN (ISLAMIC REPUBLIC OF)'                | IRAN                      |                              |
-| 22  | '"LAO PEOPLE\'S DEMOCRATIC REPUBLIC"'       | LAOS                      |                              |
-| 23  | '"LAO PEOPLE\'s DEMOCRATIC REPUBLIC"'       | LAOS                      |                              |
-| 24  | 'LAO'                                       | LAOS                      |                              |
-| 25  | 'LIBYAN ARAB JAMAHIRIYA'                    | LIBYA                     |                              |
-| 26  | 'LIBYAN ARAB REPUBLIC'                      | LIBYA                     |                              |
-| 27  | 'MALDIVE ISLANDS'                           | MALDIVES                  |                              |
-| 28  | 'MICRONESIA (FEDERATED STATES OF)'          | MICRONESIA                |                              |
-| 29  | 'PHILIPPINE REPUBLIC'                       | PHILIPPINES               |                              |
-| 30  | 'REPUBLIC OF KOREA'                         | SOUTH KOREA               |                              |
-| 31  | 'REPUBLIC OF MOLDOVA'                       | MOLDOVA                   |                              |
-| 32  | 'RUSSIAN FEDERATION'                        | RUSSIA                    |                              |
-| 33  | 'SAINT CHRISTOPHER AND NEVIS'               | ST KITTS AND NEVIS        |                              |
-| 34  | 'SIAM'                                      | THAILAND                  |                              |
-| 35  | 'SURINAM'                                   | SURINAME                  |                              |
-| 36  | 'SWAZILAND'                                 | ESWATINI                  |                              |
-| 37  | 'SYRIAN ARAB REPUBLIC'                      | SYRIA                     |                              |
-| 38  | 'TANGANYIKA'                                | TANZANIA                  | See "Tanzania", above        |
-| 39  | 'THE FORMER YUGOSLAV REPUBLIC OF MACEDONIA' | NORTH MACEDONIA           |                              |
-| 40  | 'TÜRKİYE'                                   | TURKIYE                   |                              |
-| 41  | 'TURKEY'                                    | TURKIYE                   |                              |
-| 42  | 'UKRAINIAN SSR'                             | UKRAINE                   |                              |
-| 43  | 'UNION OF SOUTH AFRICA'                     | SOUTH AFRICA              |                              |
-| 44  | 'UNITED ARAB REPUBLIC'                      | EGYPT                     | See "Egypt and Syria", above |
-| 45  | 'UNITED REPUBLIC OF CAMEROON'               | CAMEROON                  |                              |
-| 46  | 'UNITED REPUBLIC OF TANZANIA'               | TANZANIA                  |                              |
-| 47  | 'UPPER VOLTA'                               | BURKINA FASO              |                              |
-| 48  | 'USSR'                                      | RUSSIA                    |                              |
-| 49  | 'VENEZUELA (BOLIVARIAN REPUBLIC OF)'        | VENEZUELA                 |                              |
-| 50  | 'VIET NAM'                                  | VIETNAM                   |                              |
-| 51  | 'ZAIRE'                                     | CONGO (DRC)               |                              |
-| 52  | 'ZANZIBAR'                                  | TANZANIA                  | See "Tanzania", above        |
+| 01  | 'BOLIVIA (PLURINATIONAL STATE OF)'          | BOLIVIA                   |                              |
+| 02  | 'BRUNEI DARUSSALAM'                         | BRUNEI                    |                              |
+| 03  | 'BURMA'                                     | MYANMAR                   |                              |
+| 04  | 'BYELORUSSIAN SSR'                          | BELARUS                   |                              |
+| 05  | 'CABO VERDE'                                | CAPE VERDE                |                              |
+| 06  | 'CENTRAL AFRICAN EMPIRE'                    | CENTRAL AFRICAN REPUBLIC  |                              |
+| 07  | 'CEYLON'                                    | SRI LANKA                 |                              |
+| 08  | 'CONGO'                                     | CONGO (ROC)               |                              |
+| 09  | 'CONGO (BRAZZAVILLE)'                       | CONGO (ROC)               |                              |
+| 10  | 'CONGO (DEMOCRATIC REPUBLIC OF)'            | CONGO (DRC)               |                              |
+| 11  | 'CONGO (LEOPOLDVILLE)'                      | CONGO (DRC)               |                              |
+| 12  | '"CÔTE D\'IVOIRE"'                          | IVORY COAST               |                              |
+| 13  | '"COTE D\'IVOIRE"'                          | IVORY COAST               |                              |
+| 14  | 'CZECH REPUBLIC'                            | CZECHIA                   |                              |
+| 15  | 'DAHOMEY'                                   | BENIN                     |                              |
+| 16  | 'DEMOCRATIC KAMPUCHEA'                      | CAMBODIA                  |                              |
+| 17  | '"DEMOCRATIC PEOPLE\'S REPUBLIC OF KOREA"'  | NORTH KOREA               |                              |
+| 18  | 'DEMOCRATIC REPUBLIC OF THE CONGO'          | CONGO (DRC)               |                              |
+| 19  | 'GERMAN DEMOCRATIC REPUBLIC'                | EAST GERMANY              |                              |
+| 20  | 'GERMANY, FEDERAL REPUBLIC OF'              | GERMANY                   |                              |
+| 21  | 'KHMER REPUBLIC'                            | CAMBODIA                  |                              |
+| 22  | 'IRAN (ISLAMIC REPUBLIC OF)'                | IRAN                      |                              |
+| 23  | '"LAO PEOPLE\'S DEMOCRATIC REPUBLIC"'       | LAOS                      |                              |
+| 24  | '"LAO PEOPLE\'s DEMOCRATIC REPUBLIC"'       | LAOS                      |                              |
+| 25  | 'LAO'                                       | LAOS                      |                              |
+| 26  | 'LIBYAN ARAB JAMAHIRIYA'                    | LIBYA                     |                              |
+| 27  | 'LIBYAN ARAB REPUBLIC'                      | LIBYA                     |                              |
+| 28  | 'MALDIVE ISLANDS'                           | MALDIVES                  |                              |
+| 29  | 'MICRONESIA (FEDERATED STATES OF)'          | MICRONESIA                |                              |
+| 30  | 'PHILIPPINE REPUBLIC'                       | PHILIPPINES               |                              |
+| 31  | 'REPUBLIC OF KOREA'                         | SOUTH KOREA               |                              |
+| 32  | 'REPUBLIC OF MOLDOVA'                       | MOLDOVA                   |                              |
+| 33  | 'RUSSIAN FEDERATION'                        | RUSSIA                    |                              |
+| 34  | 'SAINT CHRISTOPHER AND NEVIS'               | ST KITTS AND NEVIS        |                              |
+| 35  | 'SIAM'                                      | THAILAND                  |                              |
+| 36  | 'SURINAM'                                   | SURINAME                  |                              |
+| 37  | 'SWAZILAND'                                 | ESWATINI                  |                              |
+| 38  | 'SYRIAN ARAB REPUBLIC'                      | SYRIA                     |                              |
+| 39  | 'TANGANYIKA'                                | TANZANIA                  | See "Tanzania", above        |
+| 40  | 'THE FORMER YUGOSLAV REPUBLIC OF MACEDONIA' | NORTH MACEDONIA           |                              |
+| 41  | 'TÜRKİYE'                                   | TURKIYE                   |                              |
+| 42  | 'TURKEY'                                    | TURKIYE                   |                              |
+| 43  | 'UKRAINIAN SSR'                             | UKRAINE                   |                              |
+| 44  | 'UNION OF SOUTH AFRICA'                     | SOUTH AFRICA              |                              |
+| 45  | 'UNITED ARAB REPUBLIC'                      | EGYPT                     | See "Egypt and Syria", above |
+| 46  | 'UNITED REPUBLIC OF CAMEROON'               | CAMEROON                  |                              |
+| 47  | 'UNITED REPUBLIC OF TANZANIA'               | TANZANIA                  |                              |
+| 48  | 'UPPER VOLTA'                               | BURKINA FASO              |                              |
+| 49  | 'USSR'                                      | RUSSIA                    |                              |
+| 50  | 'VENEZUELA (BOLIVARIAN REPUBLIC OF)'        | VENEZUELA                 |                              |
+| 51  | 'VIET NAM'                                  | VIETNAM                   |                              |
+| 52  | 'ZAIRE'                                     | CONGO (DRC)               |                              |
+| 53  | 'ZANZIBAR'                                  | TANZANIA                  | See "Tanzania", above        |

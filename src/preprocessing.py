@@ -105,9 +105,10 @@ def process_country_names(column):
     Returns formatted column to the dataframe
     """
     aliases = {
-        'BYELORUSSIAN SSR': "BELARUS", 
         'BOLIVIA (PLURINATIONAL STATE OF)': "BOLIVIA", 
         'BRUNEI DARUSSALAM': "BRUNEI", 
+        'BURMA': "MYANMAR",
+        'BYELORUSSIAN SSR': "BELARUS",
         'CABO VERDE': "CAPE VERDE", 
         'CENTRAL AFRICAN EMPIRE': "CENTRAL AFRICAN REPUBLIC", 
         'CEYLON': "SRI LANKA", 
@@ -188,16 +189,16 @@ with open(f"./data/member_states_consolidated.csv", "w", encoding=ENCODING) as f
 ##########################################################################
 
 # Create DataFrame with new country columns
-country_columns = {country: ["N/A"]*len(df) for country in countries_renamed}
+country_columns = {country: [np.nan]*len(df) for country in countries_renamed}
 new_df = pd.DataFrame(country_columns)
 # Concatenate new DataFrame to the original
 df = pd.concat([df, new_df], axis=1)
 
 vote_abbreviations = {
-    "Yes Votes": "Y",
-    "No Votes": "N", 
-    "Abstentions": "A", 
-    "Non-Voting": "X"
+    "Yes Votes":    "Y",
+    "No Votes":     "N", 
+    "Abstentions":  "A", 
+    "Non-Voting":   "X"
 }
 
 # Populate country columns
