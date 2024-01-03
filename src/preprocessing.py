@@ -15,9 +15,10 @@ logging.basicConfig(filename="./logs/error.log",
                     format="%(asctime)s - %(levelname)s: %(message)s")
 ENCODING = "utf-8"
 DATA_FOLDER = "./data"
-
-prefix = "20231028_2318"
-
+# NOTE: update prefix before running to match the most recent completed
+# "..._records.csv" file in data folder
+prefix = "20240103_1220"
+# Get latest version
 df = pd.read_csv(f"{DATA_FOLDER}/{prefix}_records.csv")
 
 ##########################################################################
@@ -60,7 +61,7 @@ df = df[columns]
 # Drop rows where votes = "Undisclosed"
 df = df[df["Yes Votes"] != "['Undisclosed']"]
 # Convert dates to datetime
-df["Vote Date"] = pd.to_datetime(df["Vote Date"], dayfirst=True)
+df["Vote Date"] = pd.to_datetime(df["Vote Date"], format='%Y-%m-%d', errors='coerce')
 # Sort by date, then by resolution reference
 df = df.sort_values(by=["Vote Date", "Resolution"])
 # Reset index and drop previous index
@@ -68,6 +69,17 @@ df = df.reset_index(drop=True)
 
 df.info()
 df.describe()
+
+##########################################################################
+# Format vote-count columns
+##########################################################################
+
+int_cols = ["Num Yes",	"Num No", "Num Abstentions", "Num Non-Voting", "Total Votes"]
+# Convert format of vote-count columns from int64 to int32
+for col in int_cols:
+    df[col] = df[col].astype("int32")
+    
+df.info()
 
 ##########################################################################
 # Format country entries and get list of unique countries
@@ -189,8 +201,9 @@ with open(f"./data/member_states_consolidated.csv", "w", encoding=ENCODING) as f
 ##########################################################################
 
 # Create DataFrame with new country columns
-country_columns = {country: [np.nan]*len(df) for country in countries_renamed}
+country_columns = {country: ["N/A"]*len(df) for country in countries_renamed}
 new_df = pd.DataFrame(country_columns)
+
 # Concatenate new DataFrame to the original
 df = pd.concat([df, new_df], axis=1)
 
