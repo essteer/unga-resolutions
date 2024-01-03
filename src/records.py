@@ -15,14 +15,13 @@ logging.basicConfig(filename="./logs/error.log",
 
 ENCODING = "utf-8"
 DATA_FOLDER = "./data"
-
-# NOTE: update prefix before running
-prefix = "20231028_2318"
-
+# NOTE: update prefix before running to match the most recent completed
+# "..._records.csv" and "..._processed_segments.txt" files in data folder
+prefix = "20240103_1220"
 # Get latest versions
 LATEST_RECORDS = f"{DATA_FOLDER}/{prefix}_records.csv"
 LATEST_PROCESSED_SEGMENTS = f"{DATA_FOLDER}/{prefix}_processed_segments.txt"
-LATEST_LINKS = f"{DATA_FOLDER}/20231026_1158_links.csv"
+LATEST_LINKS = f"{DATA_FOLDER}/20240103_1052_links.csv"
 
 ##########################################################################
 # Prepare URLs and requests
@@ -43,7 +42,7 @@ with open(LATEST_LINKS, "r") as file:
 with open(LATEST_PROCESSED_SEGMENTS, "r", encoding=ENCODING) as file:
     processed_segments = [line.strip() for line in file]
 
-BATCH_SIZE = 500
+BATCH_SIZE = 100
 START = len(processed_segments)
 END = min(START + BATCH_SIZE, len(SEGMENTS))
 # Time delays in seconds

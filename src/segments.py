@@ -20,9 +20,9 @@ PRESENT_SESSION = 2023
 # ~~~ Updates ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Cannot paginate >500 records, so iterate by year (~100 records per year)
-SESSIONS_LIST = list(range(1946, PRESENT_SESSION + 1))
+SESSIONS_LIST = list(range(2023, PRESENT_SESSION + 1))
 # No records available for 1964
-SESSIONS_LIST.remove(1964)
+# SESSIONS_LIST.remove(1964)
 # Records with data missing from archive
 MISSING_RECORDS = ["454783"]
 # Max no. of records was 170, in 1952
@@ -161,8 +161,9 @@ for session in tqdm(SESSIONS_LIST, desc="Fetching links:"):
         # Iterate link_loc by LINKS_PER_PAGE
         link_loc += LINKS_PER_PAGE
 
-for missing_segment in MISSING_RECORDS:
-    segments_master.remove(missing_segment)
+# Uncomment below if within range
+# for missing_segment in MISSING_RECORDS:
+#     segments_master.remove(missing_segment)
 
 ##########################################################################
 # Save to csv
