@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import csv
 import logging
-import numpy as np
 import pandas as pd
-import re
+from datetime import datetime
 from tqdm import tqdm
 
 ##########################################################################
@@ -17,7 +15,7 @@ ENCODING = "utf-8"
 DATA_FOLDER = "./data"
 # NOTE: update prefix before running to match the most recent completed
 # "..._records.csv" file in data folder
-prefix = "20240103_1220"
+prefix = "20240104_1219"
 # Get latest version
 df = pd.read_csv(f"{DATA_FOLDER}/{prefix}_records.csv")
 
@@ -60,8 +58,8 @@ df = df[columns]
 
 # Drop rows where votes = "Undisclosed"
 df = df[df["Yes Votes"] != "['Undisclosed']"]
-# Convert dates to datetime
-df["Vote Date"] = pd.to_datetime(df["Vote Date"], format='%Y-%m-%d', errors='coerce')
+# Convert dates to unified datetime format
+df["Vote Date"] = pd.to_datetime(df["Vote Date"], format="%Y-%m-%d", errors="coerce")
 # Sort by date, then by resolution reference
 df = df.sort_values(by=["Vote Date", "Resolution"])
 # Reset index and drop previous index
@@ -220,3 +218,21 @@ for i in tqdm(range(len(df_copy)), desc="Counting votes..."):
     for category in vote_categories:
         for country in df_copy.loc[i, category]:
             df.loc[i, country] = vote_abbreviations[category]
+
+##########################################################################
+# Save to csv
+##########################################################################
+
+# Get datetime as "yyyymmdd_hhmm"
+current_datetime = datetime.now().strftime("%Y%m%d_%H%M")
+# Set filename
+filepath = f"./data/{current_datetime}_UNGA_votes.csv"
+
+try:
+    # Save to csv
+    df.to_csv(filepath, encoding=ENCODING, index=False)
+    print(f"File saved successfully: {filepath}")
+
+except Exception as e:
+    logging.exception(f"Error: {str(e)}")
+    print(f"File save unsuccessful: review log for error details")
