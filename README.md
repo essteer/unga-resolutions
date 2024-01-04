@@ -78,6 +78,14 @@ The resolutions noted above are as follows:
 | 07  | A/RES/1991(XVIII)[ B ] | 17/12/1963 | Yes               | Non-voting      |
 | 08  | A/RES/1992(XVIII)      | 17/12/1963 | Yes               | Non-voting      |
 
+**Yemen**
+
+The Yemen Arab Republic assumed UN Member Status and first appears on voting records as "Yemen" in 1947. Between 1967 and 1990, the state of the People's Democratic Republic of Yemen emerged and maintained distinct UN membership.
+
+From 14/12/1967 to 17/12/1970, the latter state was entered on UNGA voting records as "Southern Yemen" and from 21/09/1971 to 29/12/1989 as "Democratic Yemen". The two entities reuinited as one state in 1990.
+
+The voting records for Southern Yemen and Democratic Yemen have been merged under the name "Yemen (PDR)". The voting records for Yemen and Yemen PDR are distinct, and have not been merged.
+
 **Dissolved states**
 
 Unless otherwise stated, I have not attempted to consolidate data relating to former member states that dissolved into two or more subsequent member states.
@@ -88,7 +96,7 @@ Examples in this category include the Federation of Malaya, which became today's
 
 A full list of name conversions is contained within the table below; the second column contains member state names exactly as obtained from the original dataset.
 
-Finally, the conversions in the third column have been made based on the principles outlined above, and do not reflect any political stance on my part. Should any of these conversions be in error, corrections are welcome.
+Finally, the conversions in the third column have been made based on the principles outlined above, and are not reflective of any political stance. Should any of these conversions be in error, corrections are welcome.
 
 | #   | Name on UNGA voting Record                  | Name used in this dataset | Note                         |
 | --- | ------------------------------------------- | ------------------------- | ---------------------------- |
@@ -110,38 +118,41 @@ Finally, the conversions in the third column have been made based on the princip
 | 16  | 'DEMOCRATIC KAMPUCHEA'                      | CAMBODIA                  |                              |
 | 17  | '"DEMOCRATIC PEOPLE\'S REPUBLIC OF KOREA"'  | NORTH KOREA               |                              |
 | 18  | 'DEMOCRATIC REPUBLIC OF THE CONGO'          | CONGO (DRC)               |                              |
-| 19  | 'GERMAN DEMOCRATIC REPUBLIC'                | EAST GERMANY              |                              |
-| 20  | 'GERMANY, FEDERAL REPUBLIC OF'              | GERMANY                   |                              |
-| 21  | 'KHMER REPUBLIC'                            | CAMBODIA                  |                              |
-| 22  | 'IRAN (ISLAMIC REPUBLIC OF)'                | IRAN                      |                              |
-| 23  | '"LAO PEOPLE\'S DEMOCRATIC REPUBLIC"'       | LAOS                      |                              |
-| 24  | '"LAO PEOPLE\'s DEMOCRATIC REPUBLIC"'       | LAOS                      |                              |
-| 25  | 'LAO'                                       | LAOS                      |                              |
-| 26  | 'LIBYAN ARAB JAMAHIRIYA'                    | LIBYA                     |                              |
-| 27  | 'LIBYAN ARAB REPUBLIC'                      | LIBYA                     |                              |
-| 28  | 'MALDIVE ISLANDS'                           | MALDIVES                  |                              |
-| 29  | 'MICRONESIA (FEDERATED STATES OF)'          | MICRONESIA                |                              |
-| 30  | 'PHILIPPINE REPUBLIC'                       | PHILIPPINES               |                              |
-| 31  | 'REPUBLIC OF KOREA'                         | SOUTH KOREA               |                              |
-| 32  | 'REPUBLIC OF MOLDOVA'                       | MOLDOVA                   |                              |
-| 33  | 'RUSSIAN FEDERATION'                        | RUSSIA                    |                              |
-| 34  | 'SAINT CHRISTOPHER AND NEVIS'               | ST KITTS AND NEVIS        |                              |
-| 35  | 'SIAM'                                      | THAILAND                  |                              |
-| 36  | 'SURINAM'                                   | SURINAME                  |                              |
-| 37  | 'SWAZILAND'                                 | ESWATINI                  |                              |
-| 38  | 'SYRIAN ARAB REPUBLIC'                      | SYRIA                     |                              |
-| 39  | 'TANGANYIKA'                                | TANZANIA                  | See "Tanzania", above        |
-| 40  | 'THE FORMER YUGOSLAV REPUBLIC OF MACEDONIA' | NORTH MACEDONIA           |                              |
-| 41  | 'TÜRKİYE'                                   | TURKIYE                   |                              |
-| 42  | 'TURKEY'                                    | TURKIYE                   |                              |
-| 43  | 'UKRAINIAN SSR'                             | UKRAINE                   |                              |
-| 44  | 'UNION OF SOUTH AFRICA'                     | SOUTH AFRICA              |                              |
-| 45  | 'UNITED ARAB REPUBLIC'                      | EGYPT                     | See "Egypt and Syria", above |
-| 46  | 'UNITED REPUBLIC OF CAMEROON'               | CAMEROON                  |                              |
-| 47  | 'UNITED REPUBLIC OF TANZANIA'               | TANZANIA                  |                              |
-| 48  | 'UPPER VOLTA'                               | BURKINA FASO              |                              |
-| 49  | 'USSR'                                      | RUSSIA                    |                              |
-| 50  | 'VENEZUELA (BOLIVARIAN REPUBLIC OF)'        | VENEZUELA                 |                              |
-| 51  | 'VIET NAM'                                  | VIETNAM                   |                              |
-| 52  | 'ZAIRE'                                     | CONGO (DRC)               |                              |
-| 53  | 'ZANZIBAR'                                  | TANZANIA                  | See "Tanzania", above        |
+| 19  | 'DEMOCRATIC YEMEN'                          | YEMEN (PDR)               | See "Yemen", above           |
+| 20  | 'GERMAN DEMOCRATIC REPUBLIC'                | EAST GERMANY              |                              |
+| 21  | 'GERMANY, FEDERAL REPUBLIC OF'              | GERMANY                   |                              |
+| 22  | 'KHMER REPUBLIC'                            | CAMBODIA                  |                              |
+| 23  | 'IRAN (ISLAMIC REPUBLIC OF)'                | IRAN                      |                              |
+| 24  | '"LAO PEOPLE\'S DEMOCRATIC REPUBLIC"'       | LAOS                      |                              |
+| 25  | '"LAO PEOPLE\'s DEMOCRATIC REPUBLIC"'       | LAOS                      |                              |
+| 26  | 'LAO'                                       | LAOS                      |                              |
+| 27  | 'LIBYAN ARAB JAMAHIRIYA'                    | LIBYA                     |                              |
+| 28  | 'LIBYAN ARAB REPUBLIC'                      | LIBYA                     |                              |
+| 29  | 'MALDIVE ISLANDS'                           | MALDIVES                  |                              |
+| 30  | 'MICRONESIA (FEDERATED STATES OF)'          | MICRONESIA                |                              |
+| 31  | 'NETHERLANDS (KINGDOM OF THE)'              | NETHERLANDS               |                              |
+| 32  | 'PHILIPPINE REPUBLIC'                       | PHILIPPINES               |                              |
+| 33  | 'REPUBLIC OF KOREA'                         | SOUTH KOREA               |                              |
+| 34  | 'REPUBLIC OF MOLDOVA'                       | MOLDOVA                   |                              |
+| 35  | 'RUSSIAN FEDERATION'                        | RUSSIA                    |                              |
+| 36  | 'SAINT CHRISTOPHER AND NEVIS'               | SAINT KITTS AND NEVIS     |                              |
+| 37  | 'SIAM'                                      | THAILAND                  |                              |
+| 38  | 'SOUTHERN YEMEN'                            | YEMEN (PDR)               | See "Yemen", above           |
+| 39  | 'SURINAM'                                   | SURINAME                  |                              |
+| 40  | 'SWAZILAND'                                 | ESWATINI                  |                              |
+| 41  | 'SYRIAN ARAB REPUBLIC'                      | SYRIA                     |                              |
+| 42  | 'TANGANYIKA'                                | TANZANIA                  | See "Tanzania", above        |
+| 43  | 'THE FORMER YUGOSLAV REPUBLIC OF MACEDONIA' | NORTH MACEDONIA           |                              |
+| 44  | 'TÜRKİYE'                                   | TURKIYE                   |                              |
+| 45  | 'TURKEY'                                    | TURKIYE                   |                              |
+| 46  | 'UKRAINIAN SSR'                             | UKRAINE                   |                              |
+| 47  | 'UNION OF SOUTH AFRICA'                     | SOUTH AFRICA              |                              |
+| 48  | 'UNITED ARAB REPUBLIC'                      | EGYPT                     | See "Egypt and Syria", above |
+| 49  | 'UNITED REPUBLIC OF CAMEROON'               | CAMEROON                  |                              |
+| 50  | 'UNITED REPUBLIC OF TANZANIA'               | TANZANIA                  |                              |
+| 51  | 'UPPER VOLTA'                               | BURKINA FASO              |                              |
+| 52  | 'USSR'                                      | RUSSIA                    |                              |
+| 53  | 'VENEZUELA (BOLIVARIAN REPUBLIC OF)'        | VENEZUELA                 |                              |
+| 54  | 'VIET NAM'                                  | VIETNAM                   |                              |
+| 55  | 'ZAIRE'                                     | CONGO (DRC)               |                              |
+| 56  | 'ZANZIBAR'                                  | TANZANIA                  | See "Tanzania", above        |
