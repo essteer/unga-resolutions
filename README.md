@@ -82,7 +82,7 @@ The resolutions noted above are as follows:
 
 The Yemen Arab Republic assumed UN Member Status and first appears on voting records as "Yemen" in 1947. Between 1967 and 1990, the state of the People's Democratic Republic of Yemen emerged and maintained distinct UN membership.
 
-From 14/12/1967 to 17/12/1970, the latter state was entered on UNGA voting records as "Southern Yemen" and from 21/09/1971 to 29/12/1989 as "Democratic Yemen". The two entities reuinited as one state in 1990.
+From 14/12/1967 to 17/12/1970, the latter state was entered on UNGA voting records as "Southern Yemen" and from 21/09/1971 to 29/12/1989 as "Democratic Yemen". Democratic Yemen reuinited as one state with the Yemen Arab Republic in 1990.
 
 The voting records for Southern Yemen and Democratic Yemen have been merged under the name "Yemen (PDR)". The voting records for Yemen and Yemen PDR are distinct, and have not been merged.
 
