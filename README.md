@@ -6,7 +6,9 @@ This repo draws from a dataset of UN Member States' historical voting records on
 
 Vote records were sourced from the UN Digital Library ([Dag Hammarskjöld Library](https://digitallibrary.un.org/) - see Acknowledgements, below). Some earlier records on the database do not disclose breakdowns of Members States' voting behaviour. From a starting point of 7,070 resolutions passed by the UN General Assembly (UNGA) between 1946 and 2023 (inclusive), a total of 1,660 from between 1946 and 1982 do not reveal the individual voting records.
 
-Of the 5,410 records that do provide breakdowns by country, 8 records from 2023 are absent from this dataset, leaving a total of 5,402 included in the main dataset examined here.
+The main dataset of this project focuses on the 5,410 resolutions passed between 1946 and 2023, for which vote breakdowns are publicly disclosed.
+
+Note that one record in the archive ([Draft A/C.3/56/L.45](https://digitallibrary.un.org/record/454783?ln=en)) is included in the UN Digital Library's list of resolutions with vote data, but in fact contains no vote figures and no breakdown of Member States. It appears to relate to a draft resolution that was erroneously listed with the official resolutions.
 
 ### Data collection
 
@@ -62,7 +64,7 @@ Most examples fit this pattern; a shortlist of examples includes:
 | 02  | 'CZECH REPUBLIC'           | CZECHIA                   |
 | 03  | 'SIAM'                     | THAILAND                  |
 
-**Special characters**
+#### Special characters
 
 Entities with characters in their names beyond the 26 letters of the English alphabet have been converted, and consolidated in cases where multiple versions existed. For example:
 
@@ -72,7 +74,7 @@ Entities with characters in their names beyond the 26 letters of the English alp
 | 02  | 'TÜRKİYE'                  | TURKIYE                   |
 | 03  | 'TURKEY'                   | TURKIYE                   |
 
-**Egypt and Syria**
+#### Egypt and Syria
 
 Egypt and Syria held separate UN Member State status until their unification as the United Arab Republic (UAR) on 1 February 1958.
 
@@ -97,7 +99,7 @@ The table below details the dates of these changes as visible in the voting reco
 | 06  | 17/12/1970 | A/RES/2750(XXV)[C] | Last vote with UAR recorded as a UN Member State    |
 | 07  | 21/09/1971 | A/RES/2753(XXVI)   | Egypt returns to record as voting UN Member State   |
 
-**Tanzania**
+#### Tanzania
 
 Tanzania was taken as another special case: Tanganyika and Zanzibar gained independence in 1961 and 1963, respectively, and in 1964 they merged to become the United Republic of Tanzania.
 
@@ -118,7 +120,7 @@ The resolutions noted above are as follows:
 | 07  | A/RES/1991(XVIII)[ B ] | 17/12/1963 | Yes               | Non-voting      |
 | 08  | A/RES/1992(XVIII)      | 17/12/1963 | Yes               | Non-voting      |
 
-**Yemen**
+#### Yemen
 
 The Yemen Arab Republic assumed UN Member Status and first appears on voting records as "Yemen" in 1947. Between 1967 and 1990, the state of the People's Democratic Republic of Yemen emerged and maintained distinct UN membership.
 
@@ -126,13 +128,13 @@ From 14/12/1967 to 17/12/1970, the latter state was entered on UNGA voting recor
 
 The voting records for Southern Yemen and Democratic Yemen have been merged under the name "Yemen (PDR)". The voting records for Yemen and Yemen PDR are distinct, and have not been merged.
 
-**Dissolved states**
+#### Dissolved states
 
 Unless otherwise stated, I have not attempted to consolidate data relating to former member states that dissolved into two or more subsequent member states.
 
 Examples in this category include the Federation of Malaya, which became today's Malaysia and Singapore; and Yugoslavia, which dissolved into several sovereign member states during the 1990s.
 
-**Conversion table**
+#### Conversion table
 
 A full list of name conversions is contained within the table below; the second column contains member state names exactly as obtained from the original dataset.
 
