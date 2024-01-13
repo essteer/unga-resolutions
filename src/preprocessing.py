@@ -15,7 +15,7 @@ ENCODING = "utf-8"
 DATA_FOLDER = "./data"
 # NOTE: update prefix before running to match the most recent completed
 # "..._records.csv" file in data folder
-prefix = "20240104_1219"
+prefix = "20240113_1341"
 # Get latest version
 df = pd.read_csv(f"{DATA_FOLDER}/{prefix}_records.csv")
 
