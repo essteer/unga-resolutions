@@ -1,5 +1,7 @@
 # UN General Assembly resolutions
 
+![GitHub last commit](https://img.shields.io/github/last-commit/essteer/unga-resolutions?color=green) ![GitHub License](https://img.shields.io/github/license/essteer/unga-resolutions?color=blue) ![GitHub top language](https://img.shields.io/github/languages/top/essteer/unga-resolutions?color=red)
+
 ### Overview
 
 This repo draws from a dataset of UN Member States' historical voting records on General Assembly resolutions from 1946 to 2023, and displays preliminary explorations into relationships and trends exhibited by UN Member States.
