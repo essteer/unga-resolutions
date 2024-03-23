@@ -15,12 +15,12 @@ LINKS_PER_PAGE = 100  # options = {10, 25, 50, 100}
 LINK_LOC_BASE = "&jrec="
 YEAR_BASE = "&fct__3="
 FILTERS = "&fct__2=General+Assembly&cc=Voting+Data&fct__9=Vote"
-PRESENT_SESSION = 2023
+PRESENT_SESSION = 2024
 
 # ~~~ Updates ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Cannot paginate >500 records, so iterate by year (~100 records per year)
-SESSIONS_LIST = list(range(2023, PRESENT_SESSION + 1))
+SESSIONS_LIST = list(range(1990, PRESENT_SESSION + 1))
 # No records available for 1964
 # SESSIONS_LIST.remove(1964)
 # Records with data missing from archive
@@ -28,8 +28,8 @@ MISSING_RECORDS = ["454783"]
 # Max no. of records was 170, in 1952
 MAX_LINKS_PER_SESSION = 170
 # Time delays in seconds
-MIN_DELAY = 2
-MAX_DELAY = 8
+MIN_DELAY = 1
+MAX_DELAY = 2
 
 # ~~~ Header data ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
