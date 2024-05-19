@@ -5,8 +5,8 @@ description = "Web scrape and ETL pipeline for UN General Assembly resolutions d
 authors = [{ name = "Elliott Steer", email = "essteer@pm.me" }]
 dependencies = [
     "beautifulsoup4>=4.12.2",
-    "numpy==1.25.2",
-    "pandas>=2.2.1",
+    "numpy==1.26.0",
+    "pandas>=2.2.2",
     "requests>=2.31.0",
     "tqdm>=4.66.1",
 ]
