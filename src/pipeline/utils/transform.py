@@ -1,4 +1,87 @@
 from bs4.element import ResultSet
+from src.config import countries, countries_renamed, COUNTRY_ALIASES, ENCODING
+
+
+def encode_metadata_as_utf8(data: dict) -> dict:
+    """
+    Encodes metadata in UTF-8 form
+
+    Parameters
+    ----------
+    data : dict
+        data to be encoded
+
+    Returns
+    -------
+    encoded_dict : dict
+        dict with encoded data
+    """
+    encoded_dict = dict()
+
+    for res, metadata in data.items():
+        encoded_metadata = dict()
+
+        for key, value in metadata.items():
+            # Encode byte literals
+            if isinstance(value, bytes):
+                encoded_value = value.decode(ENCODING)
+            else:  # Leave other values unchanged
+                encoded_value = value
+            encoded_metadata[key] = encoded_value
+
+        encoded_dict[res] = encoded_metadata
+
+    return encoded_dict
+
+
+def process_country_names(column):
+    """
+    Removes "Zanzibar" entries as per README.md
+    Updates historic country names to modern equivalents
+    Returns formatted column to the dataframe
+
+    Parameters
+    ----------
+    column : list
+        column from a Pandas DataFrame
+
+    Returns
+    -------
+    new_col : list
+        formatted column
+    """
+    filtered_col = [c for c in column if c != "ZANZIBAR"]
+    new_col = [
+        COUNTRY_ALIASES[c] if c.upper() in COUNTRY_ALIASES else c.upper()
+        for c in filtered_col
+    ]
+    countries_renamed.update(new_col)
+
+    return new_col
+
+
+def process_vote_column(column):
+    """
+    Formats country names in vote record columns
+    Extends set of unique country names
+    Returns formatted column to the dataframe
+
+    Parameters
+    ----------
+    column : list
+        column from a Pandas DataFrame
+
+    Returns
+    -------
+    new_col : list
+        formatted column
+    """
+    formatted_column = [
+        c.strip(" '[]") for c in column.split(",") if c.strip(" '[]") != ""
+    ]
+    countries.update(formatted_column)
+
+    return formatted_column
 
 
 def sort_countries(raw_data: ResultSet) -> tuple[list]:
@@ -21,7 +104,6 @@ def sort_countries(raw_data: ResultSet) -> tuple[list]:
     Countries sorted by vote record
     """
     raw = raw_data[:]
-
     # Lists to store country names by voting record
     yes_list = []  # countries that voted yes
     no_list = []  # no votes

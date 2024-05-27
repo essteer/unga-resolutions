@@ -1,12 +1,11 @@
-import csv
 import random
 import requests
 import time
 from bs4 import BeautifulSoup
-from datetime import datetime
 from masquer import masq
 from tqdm import tqdm
 from utils.extract import get_segments
+from utils.load import save_to_csv
 
 ##########################################################################
 # Prepare URLs and requests
@@ -24,9 +23,9 @@ PRESENT_SESSION = 2024
 # ~~~ Updates ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # Cannot paginate >500 records, so iterate by year (~100 records per year)
-SESSIONS_LIST = list(range(1990, PRESENT_SESSION + 1))
+SESSIONS_LIST = list(range(1946, PRESENT_SESSION + 1))
 # No records available for 1964
-# SESSIONS_LIST.remove(1964)
+SESSIONS_LIST.remove(1964)
 # Records with data missing from archive
 MISSING_RECORDS = ["454783"]
 # Max no. of records was 170, in 1952
@@ -94,24 +93,13 @@ for session in tqdm(SESSIONS_LIST, desc="Fetching links:"):
         link_loc += LINKS_PER_PAGE
 
 # Uncomment below if within range
-# for missing_segment in MISSING_RECORDS:
-#     segments_master.remove(missing_segment)
+for missing_segment in MISSING_RECORDS:
+    segments_master.remove(missing_segment)
 
 ##########################################################################
 # Save to csv
 ##########################################################################
 
-# Get current date in the format "yyyymmdd"
-today = datetime.now().strftime("%Y%m%d_%H%M")
-# Set filename
-filename = f"./data/{today}_links.csv"
-# Create csv of link segments
-with open(filename, "w", newline="") as file:
-    writer = csv.writer(file)
-    # Write header row
-    writer.writerow(["Segment"])
-    # Write each element of the list to the CSV file as a new row
-    for segment in segments_master:
-        writer.writerow([segment])
-
-print("Process complete.")
+save_successful = save_to_csv(segments_master, "_url_segments.csv", "Segment")
+if save_successful:
+    print("URL segments saved to CSV")

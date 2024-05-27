@@ -1,55 +1,48 @@
 import logging
+import os
 import pandas as pd
-from datetime import datetime
 from tqdm import tqdm
+from src.config import (
+    ASSETS_DIR,
+    countries_renamed,
+    ERROR_LOGS_DIR,
+    ENCODING,
+    KEEP_COLUMNS,
+)
+from utils.load import save_to_csv
+from utils.transform import process_vote_column, process_country_names
 
 ##########################################################################
 # Prepare files
 ##########################################################################
 
+os.makedirs(os.path.join(ERROR_LOGS_DIR), exist_ok=True)
+error_log = os.path.join(ERROR_LOGS_DIR, "error.log")
 logging.basicConfig(
-    filename="./logs/error.log",
+    filename=error_log,
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s: %(message)s",
 )
-ENCODING = "utf-8"
-DATA_FOLDER = "./data"
 # NOTE: update prefix before running to match the most recent completed
 # "..._records.csv" file in data folder
 prefix = "20240113_1341"
 # Get latest version
-df = pd.read_csv(f"{DATA_FOLDER}/{prefix}_records.csv")
+df = pd.read_csv(os.path.join(ASSETS_DIR, f"{prefix}_records.csv"))
 
 ##########################################################################
 # Inspect data
 ##########################################################################
 
+# Uncomment to inspect data
 # df.info()
 # df.describe()
 
 ##########################################################################
 # Remove unused features
 ##########################################################################
-"""
-Unrequired columns: Record URL, Segment, Agenda, 
-Meeting Record, Draft Resolution, Committee Report, Note
-"""
-columns = [
-    "Resolution",
-    "Vote Date",
-    "Num Yes",
-    "Num No",
-    "Num Abstentions",
-    "Num Non-Voting",
-    "Total Votes",
-    "Title",
-    "Yes Votes",
-    "No Votes",
-    "Abstentions",
-    "Non-Voting",
-]
 
-df = df[columns]
+df = df[KEEP_COLUMNS]
+# Uncomment to inspect data
 # df.info()
 # df.describe()
 
@@ -84,26 +77,7 @@ df.info()
 # Format country entries and get list of unique countries
 ##########################################################################
 
-
-def process_vote_column(column):
-    """
-    Formats country names in vote record columns
-    Extends set of unique country names
-    Returns formatted column to the dataframe
-    """
-    formatted_column = [
-        c.strip(" '[]") for c in column.split(",") if c.strip(" '[]") != ""
-    ]
-
-    global countries
-    countries.update(formatted_column)
-
-    return formatted_column
-
-
-countries = set()
 vote_categories = ["Yes Votes", "No Votes", "Abstentions", "Non-Voting"]
-
 # Apply process_vote_column to format country names
 for vote_category in vote_categories:
     df[vote_category] = df[vote_category].apply(process_vote_column)
@@ -112,83 +86,6 @@ for vote_category in vote_categories:
 # Consolidate country names
 ##########################################################################
 
-
-def process_country_names(column):
-    """
-    Removes "Zanzibar" entries as per README.md
-    Updates historic country names to modern equivalents
-    Returns formatted column to the dataframe
-    """
-    aliases = {
-        "BOLIVIA (PLURINATIONAL STATE OF)": "BOLIVIA",
-        "BRUNEI DARUSSALAM": "BRUNEI",
-        "BURMA": "MYANMAR",
-        "BYELORUSSIAN SSR": "BELARUS",
-        "CABO VERDE": "CAPE VERDE",
-        "CENTRAL AFRICAN EMPIRE": "CENTRAL AFRICAN REPUBLIC",
-        "CEYLON": "SRI LANKA",
-        "CONGO": "CONGO (ROC)",
-        "CONGO (BRAZZAVILLE)": "CONGO (ROC)",
-        "CONGO (DEMOCRATIC REPUBLIC OF)": "CONGO (DRC)",
-        "CONGO (LEOPOLDVILLE)": "CONGO (DRC)",
-        '"CÔTE D\'IVOIRE"': "IVORY COAST",
-        '"COTE D\'IVOIRE"': "IVORY COAST",
-        "CZECH REPUBLIC": "CZECHIA",
-        "DAHOMEY": "BENIN",
-        "DEMOCRATIC KAMPUCHEA": "CAMBODIA",
-        '"DEMOCRATIC PEOPLE\'S REPUBLIC OF KOREA"': "NORTH KOREA",
-        "DEMOCRATIC REPUBLIC OF THE CONGO": "CONGO (DRC)",
-        "DEMOCRATIC YEMEN": "YEMEN (PDR)",
-        "GERMAN DEMOCRATIC REPUBLIC": "EAST GERMANY",
-        "FEDERAL REPUBLIC OF": "GERMANY",
-        "KHMER REPUBLIC": "CAMBODIA",
-        "IRAN (ISLAMIC REPUBLIC OF)": "IRAN",
-        '"LAO PEOPLE\'S DEMOCRATIC REPUBLIC"': "LAOS",
-        '"LAO PEOPLE\'s DEMOCRATIC REPUBLIC"': "LAOS",
-        "LAO": "LAOS",
-        "LIBYAN ARAB JAMAHIRIYA": "LIBYA",
-        "LIBYAN ARAB REPUBLIC": "LIBYA",
-        "MALDIVE ISLANDS": "MALDIVES",
-        "MICRONESIA (FEDERATED STATES OF)": "MICRONESIA",
-        "NETHERLANDS (KINGDOM OF THE)": "NETHERLANDS",
-        "PHILIPPINE REPUBLIC": "PHILIPPINES",
-        "REPUBLIC OF KOREA": "SOUTH KOREA",
-        "REPUBLIC OF MOLDOVA": "MOLDOVA",
-        "RUSSIAN FEDERATION": "RUSSIA",
-        "SAINT CHRISTOPHER AND NEVIS": "SAINT KITTS AND NEVIS",
-        "SIAM": "THAILAND",
-        "SOUTHERN YEMEN": "YEMEN (PDR)",
-        "SURINAM": "SURINAME",
-        "SWAZILAND": "ESWATINI",
-        "SYRIAN ARAB REPUBLIC": "SYRIA",
-        "TANGANYIKA": "TANZANIA",
-        "THE FORMER YUGOSLAV REPUBLIC OF MACEDONIA": "NORTH MACEDONIA",
-        "TÜRKİYE": "TURKIYE",
-        "TURKEY": "TURKIYE",
-        "UKRAINIAN SSR": "UKRAINE",
-        "UNION OF SOUTH AFRICA": "SOUTH AFRICA",
-        "UNITED ARAB REPUBLIC": "EGYPT",
-        "UNITED REPUBLIC OF CAMEROON": "CAMEROON",
-        "UNITED REPUBLIC OF TANZANIA": "TANZANIA",
-        "UPPER VOLTA": "BURKINA FASO",
-        "USSR": "RUSSIA",
-        "VENEZUELA (BOLIVARIAN REPUBLIC OF)": "VENEZUELA",
-        "VIET NAM": "VIETNAM",
-        "ZAIRE": "CONGO (DRC)",
-        "ZANZIBAR": "TANZANIA",
-    }
-
-    filtered_col = [c for c in column if c != "ZANZIBAR"]
-
-    new_col = [aliases[c] if c.upper() in aliases else c.upper() for c in filtered_col]
-
-    global countries_renamed
-    countries_renamed.update(new_col)
-
-    return new_col
-
-
-countries_renamed = set()
 vote_categories = ["Yes Votes", "No Votes", "Abstentions", "Non-Voting"]
 
 # Apply process_vote_column to format country names
@@ -198,7 +95,9 @@ for vote_category in vote_categories:
 countries_renamed = sorted(countries_renamed)
 
 # Save updated country names to file
-with open("./data/member_states_consolidated.csv", "w", encoding=ENCODING) as file:
+with open(
+    os.path.join(ASSETS_DIR, "member_states_consolidated.csv"), "w", encoding=ENCODING
+) as file:
     for country in countries_renamed:
         file.write(f"{country}\n")
 
@@ -231,16 +130,6 @@ for i in tqdm(range(len(df_copy)), desc="Counting votes..."):
 # Save to csv
 ##########################################################################
 
-# Get datetime as "yyyymmdd_hhmm"
-current_datetime = datetime.now().strftime("%Y%m%d_%H%M")
-# Set filename
-filepath = f"./data/{current_datetime}_UNGA_votes.csv"
-
-try:
-    # Save to csv
-    df.to_csv(filepath, encoding=ENCODING, index=False)
-    print(f"File saved successfully: {filepath}")
-
-except Exception as e:
-    logging.exception(f"Error: {str(e)}")
-    print("File save unsuccessful: review log for error details")
+save_successful = save_to_csv(df, "_UNGA_votes.csv")
+if save_successful:
+    print("Processed vote records saved to CSV")

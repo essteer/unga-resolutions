@@ -8,28 +8,30 @@ from bs4 import BeautifulSoup
 from masquer import masq
 from datetime import datetime
 from tqdm import tqdm
+from src.config import ASSETS_DIR, ENCODING, ERROR_LOGS_DIR
 from utils.extract import get_country_votes, get_figures, get_figures_granular
-from utils.transform import sort_countries
+from utils.load import save_dict_to_csv, save_to_csv
+from utils.transform import encode_metadata_as_utf8, sort_countries
 
 ##########################################################################
 # Prepare files
 ##########################################################################
 
+os.makedirs(os.path.join(ERROR_LOGS_DIR), exist_ok=True)
+error_log = os.path.join(ERROR_LOGS_DIR, "error.log")
 logging.basicConfig(
-    filename="./logs/error.log",
+    filename=error_log,
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s: %(message)s",
 )
 
-ENCODING = "utf-8"
-DATA_FOLDER = "./data"
 # NOTE: update prefix before running to match the most recent completed
-# "..._records.csv" and "..._processed_segments.txt" files in data folder
+# "..._records.csv" and "..._processed_segments.csv" files in data folder
 prefix = "20240113_1310"
 # Get latest versions
-LATEST_RECORDS = f"{DATA_FOLDER}/{prefix}_records.csv"
-LATEST_PROCESSED_SEGMENTS = f"{DATA_FOLDER}/{prefix}_processed_segments.txt"
-LATEST_LINKS = f"{DATA_FOLDER}/20240113_1340_links.csv"
+LATEST_RECORDS = os.path.join(ASSETS_DIR, f"{prefix}_records.csv")
+LATEST_PROCESSED_SEGMENTS = os.path.join(ASSETS_DIR, f"{prefix}_processed_segments.csv")
+LATEST_LINKS = os.path.join(ASSETS_DIR, "20240113_1340_links.csv")
 
 ##########################################################################
 # Prepare URLs and requests
@@ -54,8 +56,8 @@ BATCH_SIZE = 50
 START = len(processed_segments)
 END = min(START + BATCH_SIZE, len(SEGMENTS))
 # Time delays in seconds
-MIN_DELAY = 2
-MAX_DELAY = 8
+MIN_DELAY = 0.5
+MAX_DELAY = 3
 # Response codes
 GOOD_RESPONSES = [200]
 RETRY_RESPONSES = [429]
@@ -192,86 +194,62 @@ for segment in tqdm(SEGMENTS[START:END], desc="Fetching records"):
         }
     except Exception as e:
         logging.info(f"Data issue: {str(e)}; url: {record_URL}; counter: {counter}")
-        # Skip record if voting data is missing
+        # Skip record if vote data is missing
         continue
 
     processed_segments.append(segment)
     counter += 1
 
-##########################################################################
 # Encode data in UTF-8
-##########################################################################
-
-encoded_resolutions_dict = {}
-for res, metadata in resolutions_dict.items():
-    encoded_metadata = {}
-
-    for key, value in metadata.items():
-        # Encode byte literals
-        if isinstance(value, bytes):
-            encoded_value = value.decode(ENCODING)
-        # Leave other values unchanged
-        else:
-            encoded_value = value
-
-        encoded_metadata[key] = encoded_value
-
-    encoded_resolutions_dict[res] = encoded_metadata
+encoded_resolutions_dict = encode_metadata_as_utf8(resolutions_dict)
 
 ##########################################################################
-# Save to csv
+# Save records to csv
 ##########################################################################
 
 # Get datetime as "yyyymmdd_hhmm"
 current_datetime = datetime.now().strftime("%Y%m%d_%H%M")
 # Set filename
-new_version = f"./data/{current_datetime}_records.csv"
+new_version = os.path.join(ASSETS_DIR, f"{current_datetime}_records.csv")
 # Check whether LATEST_RECORDS exists
 file_exists = os.path.isfile(LATEST_RECORDS)
 
-if file_exists:
-    try:
+try:
+    if file_exists:
         # Read the existing CSV file
         with open(LATEST_RECORDS, "r", encoding=ENCODING, newline="") as file:
             reader = csv.reader(file)
             data = list(reader)
 
         # Append resolutions_dict data to existing data
-        for res, metadata in encoded_resolutions_dict.items():
+        for metadata in encoded_resolutions_dict.values():
             new_row = [metadata.get(column, "") for column in data[0]]
             data.append(new_row)
 
         # Save entire dataset to new file
-        with open(new_version, "w", encoding=ENCODING, newline="") as file:
-            writer = csv.writer(file)
-            writer.writerows(data)
+        save_successful = save_dict_to_csv(data, new_version)
 
-    except Exception as e:
-        logging.exception(f"Error: {str(e)}; url: {record_URL}; counter: {counter}")
-
-else:
-    try:
+    else:
         # Save resolutions_dict data to csv
-        with open(new_version, "w", encoding=ENCODING, newline="") as file:
-            columns = list(encoded_resolutions_dict.values())[0].keys()
-            writer = csv.DictWriter(file, fieldnames=columns)
+        save_successful = save_dict_to_csv(
+            encoded_resolutions_dict, new_version, is_new=True
+        )
 
-            if not file_exists:
-                writer.writeheader()
-            for res, metadata in encoded_resolutions_dict.items():
-                writer.writerow(metadata)
+    if save_successful:
+        print(f"{counter} record{'s' if counter != 1 else ''} saved to csv")
 
-    except Exception as e:
-        logging.exception(f"Error: {str(e)}; url: {record_URL}; counter: {counter}")
+except Exception as e:
+    logging.exception(f"Error: {str(e)}; url: {record_URL}; counter: {counter}")
 
-# Create new file of processed URLs for later resumption
-with open(
-    f"./data/{current_datetime}_processed_segments.txt", "w", encoding=ENCODING
-) as file:
-    for segment in processed_segments:
-        file.write(f"{segment}\n")
+##########################################################################
+# Save URL segment progress to csv
+##########################################################################
 
-print(f"{counter} record{'s' if counter != 1 else ''} saved to csv")
+save_successful = save_to_csv(
+    processed_segments, "_processed_segments.csv", "Processed Segments"
+)
+if save_successful:
+    print("Processed URL segments saved to CSV")
 
 # Confirm no duplicates exist
 assert len(processed_segments) == len(set(processed_segments))
