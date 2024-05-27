@@ -2,8 +2,11 @@ import csv
 import logging
 import os
 import pandas as pd
+import sys
 from datetime import datetime
-from src.config import ASSETS_DIR, ENCODING, ERROR_LOGS_DIR
+
+sys.path.append("..")
+from config import ASSETS_DIR, ENCODING, ERROR_LOGS_DIR
 
 
 os.makedirs(os.path.join(ERROR_LOGS_DIR), exist_ok=True)
