@@ -110,29 +110,29 @@ The sequence of charts that follows offer examples of preliminary insights that 
 
 A time series of UNGA resolutions passed each year between 1946 and 2023 - using the full dataset of 7,070 records:
 
-<img src="src/images/unga_resolutions.png" alt="Annual Number of UNGA Resolutions (1946 - 2023)"
+<img src="images/unga_resolutions.png" alt="Annual Number of UNGA Resolutions (1946 - 2023)"
         width="700" height="350">
 
 Note that 1964 is an anomaly - the only year to date in which no resolutions were passed.
 
 A [Google Ngram Viewer](https://books.google.com/ngrams/)-style time series plot of keywords in UNGA resolution titles:
 
-<img src="src/images/unga_resolutions_ngrams.png" alt="Annual Colonialism- and Nuclear-related UNGA Resolutions (1946 - 2023)"
+<img src="images/unga_resolutions_ngrams.png" alt="Annual Colonialism- and Nuclear-related UNGA Resolutions (1946 - 2023)"
         width="700" height="350">
 
 Bar plots of the top ten countries by vote category ("Yes" votes, "No" votes, Abstentions, and Non-Voting):
 
-<img src="src/images/unga_resolutions_top10s.png" alt="Top 10 Member States by Vote Category"
+<img src="images/unga_resolutions_top10s.png" alt="Top 10 Member States by Vote Category"
         width="600" height="500">
 
 Vote breakdowns of three countries:
 
-<img src="src/images/unga_resolutions_pie.png" alt="UNGA Resolution Vote Records (1946 - 2023)"
+<img src="images/unga_resolutions_pie.png" alt="UNGA Resolution Vote Records (1946 - 2023)"
         width="600" height="240">
 
 Vote breakdowns of South American countries:
 
-<img src="src/images/unga_resolutions_barh.png" alt="UNGA Resolution Votes by South American Member States (1946 - 2023)"
+<img src="images/unga_resolutions_barh.png" alt="UNGA Resolution Votes by South American Member States (1946 - 2023)"
         width="600" height="375">
 
 ### Acknowledgements

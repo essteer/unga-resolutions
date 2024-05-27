@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 import pandas as pd
 from datetime import datetime
@@ -8,9 +7,11 @@ from tqdm import tqdm
 # Prepare files
 ##########################################################################
 
-logging.basicConfig(filename="./logs/error.log", 
-                    level=logging.INFO,
-                    format="%(asctime)s - %(levelname)s: %(message)s")
+logging.basicConfig(
+    filename="./logs/error.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s: %(message)s",
+)
 ENCODING = "utf-8"
 DATA_FOLDER = "./data"
 # NOTE: update prefix before running to match the most recent completed
@@ -34,18 +35,18 @@ Unrequired columns: Record URL, Segment, Agenda,
 Meeting Record, Draft Resolution, Committee Report, Note
 """
 columns = [
-    "Resolution", 
-    "Vote Date", 
-    "Num Yes", 
-    "Num No", 
-    "Num Abstentions", 
-    "Num Non-Voting", 
-    "Total Votes", 
-    "Title", 
-    "Yes Votes", 
-    "No Votes", 
-    "Abstentions", 
-    "Non-Voting" 
+    "Resolution",
+    "Vote Date",
+    "Num Yes",
+    "Num No",
+    "Num Abstentions",
+    "Num Non-Voting",
+    "Total Votes",
+    "Title",
+    "Yes Votes",
+    "No Votes",
+    "Abstentions",
+    "Non-Voting",
 ]
 
 df = df[columns]
@@ -72,16 +73,17 @@ df.describe()
 # Format vote-count columns
 ##########################################################################
 
-int_cols = ["Num Yes",	"Num No", "Num Abstentions", "Num Non-Voting", "Total Votes"]
+int_cols = ["Num Yes", "Num No", "Num Abstentions", "Num Non-Voting", "Total Votes"]
 # Convert format of vote-count columns from int64 to int32
 for col in int_cols:
     df[col] = df[col].astype("int32")
-    
+
 df.info()
 
 ##########################################################################
 # Format country entries and get list of unique countries
 ##########################################################################
+
 
 def process_vote_column(column):
     """
@@ -89,11 +91,13 @@ def process_vote_column(column):
     Extends set of unique country names
     Returns formatted column to the dataframe
     """
-    formatted_column = [c.strip(" '[]") for c in column.split(",") if c.strip(" '[]") != ""]
-    
+    formatted_column = [
+        c.strip(" '[]") for c in column.split(",") if c.strip(" '[]") != ""
+    ]
+
     global countries
     countries.update(formatted_column)
-    
+
     return formatted_column
 
 
@@ -108,6 +112,7 @@ for vote_category in vote_categories:
 # Consolidate country names
 ##########################################################################
 
+
 def process_country_names(column):
     """
     Removes "Zanzibar" entries as per README.md
@@ -115,71 +120,71 @@ def process_country_names(column):
     Returns formatted column to the dataframe
     """
     aliases = {
-        'BOLIVIA (PLURINATIONAL STATE OF)': "BOLIVIA", 
-        'BRUNEI DARUSSALAM': "BRUNEI", 
-        'BURMA': "MYANMAR",
-        'BYELORUSSIAN SSR': "BELARUS",
-        'CABO VERDE': "CAPE VERDE", 
-        'CENTRAL AFRICAN EMPIRE': "CENTRAL AFRICAN REPUBLIC", 
-        'CEYLON': "SRI LANKA", 
-        'CONGO': "CONGO (ROC)", 
-        'CONGO (BRAZZAVILLE)': "CONGO (ROC)", 
-        'CONGO (DEMOCRATIC REPUBLIC OF)': "CONGO (DRC)",
-        'CONGO (LEOPOLDVILLE)': "CONGO (DRC)", 
-        '"CÔTE D\'IVOIRE"': "IVORY COAST", 
-        '"COTE D\'IVOIRE"': "IVORY COAST", 
-        'CZECH REPUBLIC': "CZECHIA", 
-        'DAHOMEY': "BENIN", 
-        'DEMOCRATIC KAMPUCHEA': "CAMBODIA", 
-        '"DEMOCRATIC PEOPLE\'S REPUBLIC OF KOREA"': "NORTH KOREA", 
-        'DEMOCRATIC REPUBLIC OF THE CONGO': "CONGO (DRC)", 
-        'DEMOCRATIC YEMEN': "YEMEN (PDR)",
-        'GERMAN DEMOCRATIC REPUBLIC': "EAST GERMANY", 
-        'FEDERAL REPUBLIC OF': "GERMANY", 
-        'KHMER REPUBLIC': "CAMBODIA", 
-        'IRAN (ISLAMIC REPUBLIC OF)': "IRAN", 
-        '"LAO PEOPLE\'S DEMOCRATIC REPUBLIC"': "LAOS", 
-        '"LAO PEOPLE\'s DEMOCRATIC REPUBLIC"': "LAOS", 
-        'LAO': "LAOS", 
-        'LIBYAN ARAB JAMAHIRIYA': "LIBYA", 
-        'LIBYAN ARAB REPUBLIC': "LIBYA", 
-        'MALDIVE ISLANDS': "MALDIVES", 
-        'MICRONESIA (FEDERATED STATES OF)': "MICRONESIA", 
-        'NETHERLANDS (KINGDOM OF THE)': "NETHERLANDS",
-        'PHILIPPINE REPUBLIC': "PHILIPPINES", 
-        'REPUBLIC OF KOREA': "SOUTH KOREA", 
-        'REPUBLIC OF MOLDOVA': "MOLDOVA", 
-        'RUSSIAN FEDERATION': "RUSSIA", 
-        'SAINT CHRISTOPHER AND NEVIS': "SAINT KITTS AND NEVIS", 
-        'SIAM': "THAILAND", 
-        'SOUTHERN YEMEN': "YEMEN (PDR)",
-        'SURINAM': "SURINAME", 
-        'SWAZILAND': "ESWATINI", 
-        'SYRIAN ARAB REPUBLIC': "SYRIA", 
-        'TANGANYIKA': "TANZANIA",   
-        'THE FORMER YUGOSLAV REPUBLIC OF MACEDONIA': "NORTH MACEDONIA", 
-        'TÜRKİYE': "TURKIYE", 
-        'TURKEY': "TURKIYE", 
-        'UKRAINIAN SSR': "UKRAINE", 
-        'UNION OF SOUTH AFRICA': "SOUTH AFRICA",
-        'UNITED ARAB REPUBLIC': "EGYPT",
-        'UNITED REPUBLIC OF CAMEROON': "CAMEROON", 
-        'UNITED REPUBLIC OF TANZANIA': "TANZANIA", 
-        'UPPER VOLTA': "BURKINA FASO", 
-        'USSR': "RUSSIA", 
-        'VENEZUELA (BOLIVARIAN REPUBLIC OF)': "VENEZUELA", 
-        'VIET NAM': "VIETNAM", 
-        'ZAIRE': "CONGO (DRC)", 
-        'ZANZIBAR': "TANZANIA"
+        "BOLIVIA (PLURINATIONAL STATE OF)": "BOLIVIA",
+        "BRUNEI DARUSSALAM": "BRUNEI",
+        "BURMA": "MYANMAR",
+        "BYELORUSSIAN SSR": "BELARUS",
+        "CABO VERDE": "CAPE VERDE",
+        "CENTRAL AFRICAN EMPIRE": "CENTRAL AFRICAN REPUBLIC",
+        "CEYLON": "SRI LANKA",
+        "CONGO": "CONGO (ROC)",
+        "CONGO (BRAZZAVILLE)": "CONGO (ROC)",
+        "CONGO (DEMOCRATIC REPUBLIC OF)": "CONGO (DRC)",
+        "CONGO (LEOPOLDVILLE)": "CONGO (DRC)",
+        '"CÔTE D\'IVOIRE"': "IVORY COAST",
+        '"COTE D\'IVOIRE"': "IVORY COAST",
+        "CZECH REPUBLIC": "CZECHIA",
+        "DAHOMEY": "BENIN",
+        "DEMOCRATIC KAMPUCHEA": "CAMBODIA",
+        '"DEMOCRATIC PEOPLE\'S REPUBLIC OF KOREA"': "NORTH KOREA",
+        "DEMOCRATIC REPUBLIC OF THE CONGO": "CONGO (DRC)",
+        "DEMOCRATIC YEMEN": "YEMEN (PDR)",
+        "GERMAN DEMOCRATIC REPUBLIC": "EAST GERMANY",
+        "FEDERAL REPUBLIC OF": "GERMANY",
+        "KHMER REPUBLIC": "CAMBODIA",
+        "IRAN (ISLAMIC REPUBLIC OF)": "IRAN",
+        '"LAO PEOPLE\'S DEMOCRATIC REPUBLIC"': "LAOS",
+        '"LAO PEOPLE\'s DEMOCRATIC REPUBLIC"': "LAOS",
+        "LAO": "LAOS",
+        "LIBYAN ARAB JAMAHIRIYA": "LIBYA",
+        "LIBYAN ARAB REPUBLIC": "LIBYA",
+        "MALDIVE ISLANDS": "MALDIVES",
+        "MICRONESIA (FEDERATED STATES OF)": "MICRONESIA",
+        "NETHERLANDS (KINGDOM OF THE)": "NETHERLANDS",
+        "PHILIPPINE REPUBLIC": "PHILIPPINES",
+        "REPUBLIC OF KOREA": "SOUTH KOREA",
+        "REPUBLIC OF MOLDOVA": "MOLDOVA",
+        "RUSSIAN FEDERATION": "RUSSIA",
+        "SAINT CHRISTOPHER AND NEVIS": "SAINT KITTS AND NEVIS",
+        "SIAM": "THAILAND",
+        "SOUTHERN YEMEN": "YEMEN (PDR)",
+        "SURINAM": "SURINAME",
+        "SWAZILAND": "ESWATINI",
+        "SYRIAN ARAB REPUBLIC": "SYRIA",
+        "TANGANYIKA": "TANZANIA",
+        "THE FORMER YUGOSLAV REPUBLIC OF MACEDONIA": "NORTH MACEDONIA",
+        "TÜRKİYE": "TURKIYE",
+        "TURKEY": "TURKIYE",
+        "UKRAINIAN SSR": "UKRAINE",
+        "UNION OF SOUTH AFRICA": "SOUTH AFRICA",
+        "UNITED ARAB REPUBLIC": "EGYPT",
+        "UNITED REPUBLIC OF CAMEROON": "CAMEROON",
+        "UNITED REPUBLIC OF TANZANIA": "TANZANIA",
+        "UPPER VOLTA": "BURKINA FASO",
+        "USSR": "RUSSIA",
+        "VENEZUELA (BOLIVARIAN REPUBLIC OF)": "VENEZUELA",
+        "VIET NAM": "VIETNAM",
+        "ZAIRE": "CONGO (DRC)",
+        "ZANZIBAR": "TANZANIA",
     }
-    
+
     filtered_col = [c for c in column if c != "ZANZIBAR"]
-    
+
     new_col = [aliases[c] if c.upper() in aliases else c.upper() for c in filtered_col]
-    
+
     global countries_renamed
     countries_renamed.update(new_col)
-    
+
     return new_col
 
 
@@ -193,7 +198,7 @@ for vote_category in vote_categories:
 countries_renamed = sorted(countries_renamed)
 
 # Save updated country names to file
-with open(f"./data/member_states_consolidated.csv", "w", encoding=ENCODING) as file:
+with open("./data/member_states_consolidated.csv", "w", encoding=ENCODING) as file:
     for country in countries_renamed:
         file.write(f"{country}\n")
 
@@ -202,17 +207,17 @@ with open(f"./data/member_states_consolidated.csv", "w", encoding=ENCODING) as f
 ##########################################################################
 
 # Create DataFrame with new country columns
-country_columns = {country: ["N/A"]*len(df) for country in countries_renamed}
+country_columns = {country: ["N/A"] * len(df) for country in countries_renamed}
 new_df = pd.DataFrame(country_columns)
 
 # Concatenate new DataFrame to the original
 df = pd.concat([df, new_df], axis=1)
 
 vote_abbreviations = {
-    "Yes Votes":    "Y",
-    "No Votes":     "N", 
-    "Abstentions":  "A", 
-    "Non-Voting":   "X"
+    "Yes Votes": "Y",
+    "No Votes": "N",
+    "Abstentions": "A",
+    "Non-Voting": "X",
 }
 
 # Populate country columns
@@ -238,4 +243,4 @@ try:
 
 except Exception as e:
     logging.exception(f"Error: {str(e)}")
-    print(f"File save unsuccessful: review log for error details")
+    print("File save unsuccessful: review log for error details")
