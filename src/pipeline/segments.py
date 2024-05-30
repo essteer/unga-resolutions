@@ -111,6 +111,6 @@ for missing_segment in MISSING_RECORDS:
     segments_master.remove(missing_segment)
 
 # Save to csv
-save_successful = save_to_csv(segments_master, "_url_segments.csv", "Segment")
+save_successful = save_to_csv(segments_master, "_url_segments.csv")
 if save_successful:
     print("URL segments saved to CSV")

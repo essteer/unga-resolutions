@@ -1,5 +1,8 @@
+import sys
 from bs4.element import ResultSet
-from src.config import countries, countries_renamed, COUNTRY_ALIASES, ENCODING
+
+sys.path.append("..")
+from config import countries, countries_renamed, COUNTRY_ALIASES, ENCODING
 
 
 def encode_metadata_as_utf8(data: dict) -> dict:

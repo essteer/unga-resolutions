@@ -1,8 +1,25 @@
 import os
 
 ASSETS_DIR = os.path.join(os.path.dirname(__file__), "assets")
+BASE_URL = "https://digitallibrary.un.org/record/"
 ERROR_LOGS_DIR = os.path.join(os.path.dirname(__file__), "..", "error_logs")
 ENCODING = "utf-8"
+
+# ===========================================
+# NOTE: change prefixes to match latest file versions of
+# "_records.csv" and "_processed_segments.csv" in assets dir
+
+# Change only after running segments.py
+SEGMENT_PREFIX = "YYYYMMDD_HHMM"
+# Change only after running records.py
+RECORDS_PREFIX = "YYYYMMDD_HHMM"
+# Get paths to latest versions
+LATEST_SEGMENTS = os.path.join(ASSETS_DIR, f"{SEGMENT_PREFIX}_url_segments.csv")
+LATEST_PROCESSED_SEGMENTS = os.path.join(
+    ASSETS_DIR, f"{RECORDS_PREFIX}_processed_segments.csv"
+)
+LATEST_RECORDS = os.path.join(ASSETS_DIR, f"{RECORDS_PREFIX}_records.csv")
+# ===========================================
 
 countries = set()
 countries_renamed = set()
@@ -82,4 +99,11 @@ KEEP_COLUMNS = [
     "No Votes",
     "Abstentions",
     "Non-Voting",
+]
+
+TEST_SEGMENTS = [
+    "4016932",  # normal record
+    "671259",  # missing figure
+    "3996092",  # encoding "\u0130"
+    "454783",  # no voting data
 ]

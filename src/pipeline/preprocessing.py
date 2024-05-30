@@ -1,16 +1,19 @@
 import logging
 import os
 import pandas as pd
+import sys
 from tqdm import tqdm
-from src.config import (
+from utils.load import save_to_csv
+from utils.transform import process_vote_column, process_country_names
+
+sys.path.append("..")
+from config import (
     ASSETS_DIR,
     countries_renamed,
     ERROR_LOGS_DIR,
     ENCODING,
     KEEP_COLUMNS,
 )
-from utils.load import save_to_csv
-from utils.transform import process_vote_column, process_country_names
 
 ##########################################################################
 # Prepare files
@@ -25,7 +28,7 @@ logging.basicConfig(
 )
 # NOTE: update prefix before running to match the most recent completed
 # "..._records.csv" file in data folder
-prefix = "20240113_1341"
+prefix = "2024MMDD_HHMM"
 # Get latest version
 df = pd.read_csv(os.path.join(ASSETS_DIR, f"{prefix}_records.csv"))
 

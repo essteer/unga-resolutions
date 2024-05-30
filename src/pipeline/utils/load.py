@@ -5,7 +5,7 @@ import pandas as pd
 import sys
 from datetime import datetime
 
-sys.path.append("..")
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
 from config import ASSETS_DIR, ENCODING, ERROR_LOGS_DIR
 
 
@@ -16,6 +16,34 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s: %(message)s",
 )
+
+
+def load_csv_col(filename: str, mode: str = "r", header: bool = False) -> list:
+    """
+    Extracts the first column data of a CSV
+
+    Parameters
+    ----------
+    filename : str
+        path and name of file to open
+
+    mode : str
+        mode to open file with, defaults to read only
+
+    header : bool
+        whether the CSV has a header row
+    """
+    contents = []
+
+    with open(filename, mode, encoding=ENCODING) as file:
+        csv_reader = csv.reader(file)
+        if header:
+            # Skip header row
+            header = next(csv_reader)
+        for row in csv_reader:
+            contents.append(row[0])
+
+    return contents
 
 
 def save_dict_to_csv(d: dict, filename: str, is_new: bool = False) -> bool:
@@ -61,7 +89,7 @@ def save_dict_to_csv(d: dict, filename: str, is_new: bool = False) -> bool:
         return False
 
 
-def save_list_to_csv(d: list, filename: str, row: str) -> None:
+def save_list_to_csv(d: list, filename: str, row: str | None = None) -> None:
     """
     Saves list to CSV
 
@@ -79,8 +107,9 @@ def save_list_to_csv(d: list, filename: str, row: str) -> None:
     # Create csv of list elements
     with open(filename, "w", newline="") as file:
         writer = csv.writer(file)
-        # Write header row
-        writer.writerow([row])
+        if row:
+            # Write header row
+            writer.writerow([row])
         # Write each element as a new row
         for data in d:
             writer.writerow([data])
