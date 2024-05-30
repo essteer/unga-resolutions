@@ -9,7 +9,7 @@ dependencies = [
     "numpy==1.26.0",
     "pandas>=2.2.2",
     "pre-commit==3.7.1",
-    "requests>=2.31.0",
+    "requests==2.32.3",
     "ruff==0.4.5",
     "tqdm>=4.66.1",
 ]
