@@ -30,7 +30,7 @@ logging.basicConfig(
 # "..._records.csv" file in data folder
 prefix = "2024MMDD_HHMM"
 # Get latest version
-df = pd.read_csv(os.path.join(ASSETS_DIR, f"{prefix}_records.csv"))
+df = pd.read_csv(os.path.join(ASSETS_DIR, f"{prefix}_records.csv"), engine="pyarrow")
 
 ##########################################################################
 # Inspect data
