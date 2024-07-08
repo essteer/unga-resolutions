@@ -2,7 +2,7 @@
 #    uv pip compile pyproject.toml -o requirements.txt
 beautifulsoup4==4.12.3
     # via unga-resolutions (pyproject.toml)
-certifi==2024.2.2
+certifi==2024.7.4
     # via requests
 cfgv==3.4.0
     # via pre-commit
