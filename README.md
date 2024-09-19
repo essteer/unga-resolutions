@@ -1,10 +1,14 @@
-# UN General Assembly resolutions
+<h1 align="center">UN General Assembly resolutions</h1>
 
-![Python](https://img.shields.io/badge/Python-3.9_|_3.10_|_3.11_|_3.12-3776AB.svg?style=flat&logo=Python&logoColor=white)
-[![Jupyter](https://img.shields.io/badge/Jupyter-F37626.svg?style=flat&logo=Jupyter&labelColor=555&logoColor=white)](https://github.com/jupyter)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+<p align="center">
+  <a href="https://github.com/essteer/unga-resolutions"><img src="https://img.shields.io/badge/Python-3.9_~_3.12-3776AB.svg?style=flat&logo=Python&logoColor=white"></a>
+  <a href="https://github.com/jupyter"><img src="https://img.shields.io/badge/Jupyter-F37626.svg?style=flat&logo=Jupyter&labelColor=555&logoColor=white"></a>
+  <a href="https://github.com/astral-sh/ruff"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json"><a/>
+</p>
 
+<p align="center">
 Web scrape and ETL pipeline for UN General Assembly resolutions data.
+</p>
 
 ## Overview
 
@@ -30,7 +34,7 @@ $ git clone git@github.com:essteer/unga-resolutions
 
 ### Installation
 
-First create and activate a virtual environment — the below example uses [Astral's](https://astral.sh/blog/uv) `uv`; substitute `pip` or use another package manager as needed — then install the dependencies:
+First create and activate a virtual environment — the below example uses [Astral's](https://astral.sh/blog/uv) `uv`; substitute `pip` or use another package manager as needed.
 
 ![](https://img.shields.io/badge/Linux-FCC624.svg?style=flat&logo=Linux&logoColor=black)
 ![](https://img.shields.io/badge/macOS-000000.svg?style=flat&logo=Apple&logoColor=white)
@@ -38,7 +42,6 @@ First create and activate a virtual environment — the below example uses [Astr
 ```console
 $ uv venv
 $ source .venv/bin/activate
-$ uv pip install -r requirements.txt
 ```
 
 ![](https://img.shields.io/badge/Windows-0078D4.svg?style=flat&logo=Windows&logoColor=white)
@@ -46,8 +49,20 @@ $ uv pip install -r requirements.txt
 ```console
 $ uv venv
 $ .venv\Scripts\activate
+```
+
+If using a `uv` version of `0.4.0` or higher then install the dependencies as follows &mdash; omit the `--no-dev` argument if you intend to develop the project locally:
+
+```console
+$ uv sync --no-dev
+```
+
+If using a version of `uv` prior to `0.4.0` or a package manager other than `uv`, install the dependencies from `requirements.txt`:
+
+```console
 $ uv pip install -r requirements.txt
 ```
+
 
 ### Data collection
 
