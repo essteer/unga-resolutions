@@ -1,17 +1,15 @@
 [project]
 name = "unga-resolutions"
 dynamic = ["version"]
-description = "Web scrape and ETL pipeline for UN General Assembly resolutions data"
+description = "An ETL pipeline to scrape UN Digital Library data"
 authors = [{ name = "Elliott Steer", email = "essteer@pm.me" }]
 dependencies = [
-    "beautifulsoup4>=4.12.2",
+    "beautifulsoup4==4.12.2",
     "masquer==1.1.0",
     "numpy==1.26.0",
-    "pandas>=2.2.2",
-    "pre-commit==3.7.1",
+    "pandas==2.2.2",
     "requests==2.32.3",
-    "ruff==0.4.5",
-    "tqdm>=4.66.1",
+    "tqdm==4.66.1",
 ]
 requires-python = ">=3.9"
 license = { file = "LICENSE" }
@@ -33,3 +31,9 @@ classifiers = [
 documentation = "https://github.com/essteer/unga-resolutions/blob/main/README.md"
 repository = "https://github.com/essteer/unga-resolutions"
 issues = "https://github.com/essteer/unga-resolutions/issues"
+
+[tool.uv]
+dev-dependencies = [
+    "ruff==0.4.5",
+    "pre-commit==3.7.1",
+]
